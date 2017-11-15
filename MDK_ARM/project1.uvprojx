@@ -562,6 +562,16 @@
                 </FileArmAds>
               </FileOption>
             </File>
+            <File>
+              <FileName>i2cModule.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\i2cModule.c</FilePath>
+            </File>
+            <File>
+              <FileName>oximeterDriver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\oximeterDriver.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -581,6 +591,16 @@
               <FileName>spiModule.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\inc\spiModule.h</FilePath>
+            </File>
+            <File>
+              <FileName>i2cModule.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\i2cModule.h</FilePath>
+            </File>
+            <File>
+              <FileName>oximeterDriver.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\oximeterDriver.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,6 +1,5 @@
 .\objects\gyroscopedriver.o: ..\src\gyroscopeDriver.c
 .\objects\gyroscopedriver.o: ..\inc\gyroscopeDriver.h
-.\objects\gyroscopedriver.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h
 .\objects\gyroscopedriver.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\stm32f4xx.h
 .\objects\gyroscopedriver.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\core_cm4.h
 .\objects\gyroscopedriver.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
@@ -19,3 +18,4 @@
 .\objects\gyroscopedriver.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h
 .\objects\gyroscopedriver.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h
 .\objects\gyroscopedriver.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h
+.\objects\gyroscopedriver.o: ..\inc\spiModule.h

@@ -2,6 +2,8 @@
 ".\objects\gyroscopedriver.o"
 ".\objects\main.o"
 ".\objects\spimodule.o"
+".\objects\i2cmodule.o"
+".\objects\oximeterdriver.o"
 ".\objects\misc.o"
 ".\objects\stm32f4xx_gpio.o"
 ".\objects\stm32f4xx_i2c.o"
