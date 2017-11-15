@@ -10,8 +10,7 @@
       <TargetName>TetraplegicRealTimeAssistant</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
-      <uAC6>0</uAC6>
+      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F407VG</Device>
@@ -563,6 +562,16 @@
                 </FileArmAds>
               </FileOption>
             </File>
+            <File>
+              <FileName>i2cModule.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\i2cModule.c</FilePath>
+            </File>
+            <File>
+              <FileName>oximeterDriver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\oximeterDriver.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -582,6 +591,16 @@
               <FileName>spiModule.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\inc\spiModule.h</FilePath>
+            </File>
+            <File>
+              <FileName>i2cModule.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\i2cModule.h</FilePath>
+            </File>
+            <File>
+              <FileName>oximeterDriver.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\oximeterDriver.h</FilePath>
             </File>
           </Files>
         </Group>
