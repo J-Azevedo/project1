@@ -564,6 +564,7 @@
               </FileOption>
             </File>
             <File>
+<<<<<<< HEAD
               <FileName>I2S_Module.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\I2S_Module.c</FilePath>
@@ -622,6 +623,16 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+=======
+              <FileName>i2cModule.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\i2cModule.c</FilePath>
+            </File>
+            <File>
+              <FileName>oximeterDriver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\oximeterDriver.c</FilePath>
+>>>>>>> 9018dc751465e11b1c00c88d552c034d1df6066c
             </File>
           </Files>
         </Group>
@@ -644,6 +655,7 @@
               <FilePath>..\inc\spiModule.h</FilePath>
             </File>
             <File>
+<<<<<<< HEAD
               <FileName>I2S_Module.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\inc\I2S_Module.h</FilePath>
@@ -667,6 +679,16 @@
               <FileName>..\..\emb\projeto_1\MDK_ARM\RTE\Device\Utilities\libPDMFilter_Keil.lib</FileName>
               <FileType>4</FileType>
               <FilePath>$TC_ROOT$\..\..\emb\projeto_1\MDK_ARM\RTE\Device\Utilities\libPDMFilter_Keil.lib</FilePath>
+=======
+              <FileName>i2cModule.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\i2cModule.h</FilePath>
+            </File>
+            <File>
+              <FileName>oximeterDriver.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\oximeterDriver.h</FilePath>
+>>>>>>> 9018dc751465e11b1c00c88d552c034d1df6066c
             </File>
           </Files>
         </Group>

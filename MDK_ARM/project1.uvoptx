@@ -263,8 +263,13 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\src\I2S_Module.c</PathWithFileName>
       <FilenameWithoutPath>I2S_Module.c</FilenameWithoutPath>
+=======
+      <PathWithFileName>..\src\i2cModule.c</PathWithFileName>
+      <FilenameWithoutPath>i2cModule.c</FilenameWithoutPath>
+>>>>>>> 9018dc751465e11b1c00c88d552c034d1df6066c
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -275,8 +280,13 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\src\MicrophoneDriver.c</PathWithFileName>
       <FilenameWithoutPath>MicrophoneDriver.c</FilenameWithoutPath>
+=======
+      <PathWithFileName>..\src\oximeterDriver.c</PathWithFileName>
+      <FilenameWithoutPath>oximeterDriver.c</FilenameWithoutPath>
+>>>>>>> 9018dc751465e11b1c00c88d552c034d1df6066c
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -331,8 +341,13 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\inc\I2S_Module.h</PathWithFileName>
       <FilenameWithoutPath>I2S_Module.h</FilenameWithoutPath>
+=======
+      <PathWithFileName>..\inc\i2cModule.h</PathWithFileName>
+      <FilenameWithoutPath>i2cModule.h</FilenameWithoutPath>
+>>>>>>> 9018dc751465e11b1c00c88d552c034d1df6066c
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -343,6 +358,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+<<<<<<< HEAD
       <PathWithFileName>..\inc\MicrophoneDriver.h</PathWithFileName>
       <FilenameWithoutPath>MicrophoneDriver.h</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
@@ -377,6 +393,10 @@
       <bDave2>0</bDave2>
       <PathWithFileName>$TC_ROOT$\..\..\emb\projeto_1\MDK_ARM\RTE\Device\Utilities\libPDMFilter_Keil.lib</PathWithFileName>
       <FilenameWithoutPath>..\..\emb\projeto_1\MDK_ARM\RTE\Device\Utilities\libPDMFilter_Keil.lib</FilenameWithoutPath>
+=======
+      <PathWithFileName>..\inc\oximeterDriver.h</PathWithFileName>
+      <FilenameWithoutPath>oximeterDriver.h</FilenameWithoutPath>
+>>>>>>> 9018dc751465e11b1c00c88d552c034d1df6066c
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

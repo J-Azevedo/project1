@@ -8,12 +8,12 @@
   ******************************************************************************/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __SPIMODULE_H__
-#define __SPIMODULE_H__
+#ifndef __I2CMODULE_H__
+#define __I2CMODULE_H__
 
 #include "stm32f4xx.h"
 
-void spiInit(void);
+void i2cInit(void);
 
-#endif /*__SPIMODULE_H__*/
+#endif /*__I2CMODULE_H__*/
 
