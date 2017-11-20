@@ -1,34 +1,32 @@
 /**
   ******************************************************************************
-  * @file    MicrophoneDriver.h
+  * @file    buzzerDriver.h
   * @author  Joao Azevedo
 
-  * @brief   This file contains the prototypes for the initialization of the 
-							microphone and also the start and stop of the recording
+  * @brief   This file contains all the functions prototypes for the SPI 
+  *          firmware library. 
   ****************************************************************************** 
 
 
  Define to prevent recursive inclusion -------------------------------------*/
 
 
-#ifndef __MICROPHONE_DRIVER
-#define __MICROPHONE_DRIVER
+#ifndef __BUZZER_DRIVER
+#define __BUZZER_DRIVER
 
 /*******************************************************************************
 * 														Public Defines          												  *
 ********************************************************************************/
 
-#define BUFFER_MIC_SIZE 16000
+
 
 /*******************************************************************************
 * 														Public Function Headers 												  *
 ********************************************************************************/
 
-
-void microphoneInit(unsigned int rate);
-
-
-
+void buzzerInit(void);
+void buzzerStart(void);
+void buzzerStop(void);
 
 
 
@@ -43,5 +41,4 @@ void microphoneInit(unsigned int rate);
 
 
 
-
-#endif //__MICROPHONE_DRIVER
+#endif //__BUZZER_DRIVER
