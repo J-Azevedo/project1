@@ -10,13 +10,15 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
 I (..\inc\spiModule.h)(0x5A11B70E)
@@ -27,7 +29,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BE5B4)
 I (.\RTE\RTOS\FreeRTOSConfig.h)(0x598B2142)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include\freertos_evr.h)(0x598DD422)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x588BE5B4)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\projdefs.h)(0x598B214C)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\portable.h)(0x598B214C)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\deprecated_definitions.h)(0x598B214C)
@@ -45,11 +47,13 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
 F (..\src\spiModule.c)(0x5A11B97E)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ..\inc -I ..\inc -I .\RTE -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\spimodule.o --omf_browse .\objects\spimodule.crf --depend .\objects\spimodule.d)
@@ -63,13 +67,15 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
 F (..\src\i2cModule.c)(0x5A11B70E)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ..\inc -I .\RTE -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\i2cmodule.o --omf_browse .\objects\i2cmodule.crf --depend .\objects\i2cmodule.d)
@@ -83,13 +89,15 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
 F (..\src\oximeterDriver.c)(0x5A11B70E)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ..\inc -I .\RTE -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\oximeterdriver.o --omf_browse .\objects\oximeterdriver.crf --depend .\objects\oximeterdriver.d)
@@ -103,13 +111,15 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
 I (..\inc\i2cModule.h)(0x5A11B70E)
@@ -127,12 +137,14 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
 F (..\src\I2S_Module.c)(0x5A11B6D5)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ..\inc -I .\RTE -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\i2s_module.o --omf_browse .\objects\i2s_module.crf --depend .\objects\i2s_module.d)
@@ -145,13 +157,15 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
 I (..\inc\I2S_Module.h)(0x5A11B6D5)
@@ -166,16 +180,18 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
-F (..\src\trasnceiverDriver.c)(0x5A11D5D7)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ..\inc -I .\RTE -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\trasnceiverdriver.o --omf_browse .\objects\trasnceiverdriver.crf --depend .\objects\trasnceiverdriver.d)
-I (..\inc\transceiverDriver.h)(0x5A11CB71)
+F (..\src\trasnceiverDriver.c)(0x5A12EF8B)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ..\inc -I .\RTE -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\trasnceiverdriver.o --omf_browse .\objects\trasnceiverdriver.crf --depend .\objects\trasnceiverdriver.d)
+I (..\inc\transceiverDriver.h)(0x5A12DF2E)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\stm32f4xx.h)(0x59BFC7D5)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\core_cm4.h)(0x59847036)
@@ -186,15 +202,17 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
-I (..\inc\RFM69registers.h)(0x59763155)
+I (..\inc\RFM69registers.h)(0x5A12BBE8)
 F (..\src\pushButtonDriver.c)(0x5A11C4AA)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ..\inc -I .\RTE -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\pushbuttondriver.o --omf_browse .\objects\pushbuttondriver.crf --depend .\objects\pushbuttondriver.d)
 I (..\inc\pushButtonDriver.h)(0x5A11C4AB)
 F (..\inc\defines.h)(0x54439A7E)()
@@ -206,8 +224,8 @@ F (..\inc\I2S_Module.h)(0x5A11B6D5)()
 F (..\inc\MicrophoneDriver.h)(0x5A11CA89)()
 F (..\inc\buzzerDriver.h)(0x5A11C260)()
 F (..\inc\pushButtonDriver.h)(0x5A11C4AB)()
-F (..\inc\transceiverDriver.h)(0x5A11CB71)()
-F (..\inc\RFM69registers.h)(0x59763155)()
+F (..\inc\transceiverDriver.h)(0x5A12DF2E)()
+F (..\inc\RFM69registers.h)(0x5A12BBE8)()
 F (..\Libraries\pdm_filter.h)(0x4EAA768E)()
 F ($TC_ROOT$\..\..\emb\projeto_1\Libraries\libPDMFilter_Keil.lib)(0x00000000)()
 F (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\src\misc.c)(0x52B40F56)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\misc.o --omf_browse .\objects\misc.crf --depend .\objects\misc.d)
@@ -221,14 +239,37 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
+F (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\src\stm32f4xx_dma.c)(0x52B40F56)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\stm32f4xx_dma.o --omf_browse .\objects\stm32f4xx_dma.crf --depend .\objects\stm32f4xx_dma.d)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\stm32f4xx.h)(0x59BFC7D5)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\core_cm4.h)(0x59847036)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BE5B4)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_version.h)(0x59847036)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_compiler.h)(0x59847036)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
+I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
 F (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\src\stm32f4xx_gpio.c)(0x52B40F56)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\stm32f4xx_gpio.o --omf_browse .\objects\stm32f4xx_gpio.crf --depend .\objects\stm32f4xx_gpio.d)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\stm32f4xx.h)(0x59BFC7D5)
@@ -240,12 +281,14 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
 F (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\src\stm32f4xx_i2c.c)(0x52B40F56)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\stm32f4xx_i2c.o --omf_browse .\objects\stm32f4xx_i2c.crf --depend .\objects\stm32f4xx_i2c.d)
@@ -259,12 +302,14 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
 F (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\src\stm32f4xx_rcc.c)(0x52B40F56)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\stm32f4xx_rcc.o --omf_browse .\objects\stm32f4xx_rcc.crf --depend .\objects\stm32f4xx_rcc.d)
@@ -278,12 +323,14 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
 F (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\src\stm32f4xx_rtc.c)(0x52B40F56)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\stm32f4xx_rtc.o --omf_browse .\objects\stm32f4xx_rtc.crf --depend .\objects\stm32f4xx_rtc.d)
@@ -297,12 +344,14 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
 F (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\src\stm32f4xx_spi.c)(0x52B40F56)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\stm32f4xx_spi.o --omf_browse .\objects\stm32f4xx_spi.crf --depend .\objects\stm32f4xx_spi.d)
@@ -316,12 +365,14 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
 F (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\src\stm32f4xx_tim.c)(0x52B40F56)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\stm32f4xx_tim.o --omf_browse .\objects\stm32f4xx_tim.crf --depend .\objects\stm32f4xx_tim.d)
@@ -335,13 +386,15 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
 F (RTE\Device\STM32F407VG\RTE_Device.h)(0x535FA094)()
 F (RTE\Device\STM32F407VG\startup_stm32f40_41xxx.s)(0x529F2BA2)(--cpu Cortex-M4.fp -g --apcs=interwork -I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc--pd "__UVISION_VERSION SETA 524" --pd "_RTE_ SETA 1" --pd "STM32F40_41xxx SETA 1"--list .\listings\startup_stm32f40_41xxx.lst --xref -o .\objects\startup_stm32f40_41xxx.o --depend .\objects\startup_stm32f40_41xxx.d)
@@ -356,17 +409,19 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
-F (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\src\stm32f4xx_dma.c)(0x52B40F56)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\stm32f4xx_dma.o --omf_browse .\objects\stm32f4xx_dma.crf --depend .\objects\stm32f4xx_dma.d)
-I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+F (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\src\stm32f4xx_exti.c)(0x52B40F56)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\stm32f4xx_exti.o --omf_browse .\objects\stm32f4xx_exti.crf --depend .\objects\stm32f4xx_exti.d)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\stm32f4xx.h)(0x59BFC7D5)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\core_cm4.h)(0x59847036)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BE5B4)
@@ -376,7 +431,30 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
 I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rtc.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_spi.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h)(0x52B40F56)
+F (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\src\stm32f4xx_syscfg.c)(0x52B40F56)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I .\RTE -I ..\inc -I ..\Libraries-I.\RTE\Device\STM32F407VG-I.\RTE\RTOS-I.\RTE\_TetraplegicRealTimeAssistant-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\portable\RVDS\ARM_CM4F-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o .\objects\stm32f4xx_syscfg.o --omf_browse .\objects\stm32f4xx_syscfg.crf --depend .\objects\stm32f4xx_syscfg.d)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\stm32f4xx.h)(0x59BFC7D5)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\core_cm4.h)(0x59847036)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BE5B4)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_version.h)(0x59847036)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_compiler.h)(0x59847036)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\mpu_armv7.h)(0x59847036)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F1D92)
+I (.\RTE\Device\STM32F407VG\stm32f4xx_conf.h)(0x52E63BC8)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_dma.h)(0x52B40F56)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_exti.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h)(0x52B40F56)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h)(0x52B40F56)
@@ -388,7 +466,7 @@ F (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Source\free
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include\freertos_evr.h)(0x598DD422)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x588BE5B4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BE5B4)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_compiler.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h)(0x59847036)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\FreeRTOS.h)(0x598B214C)
@@ -413,7 +491,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BE5B4)
 I (.\RTE\RTOS\FreeRTOSConfig.h)(0x598B2142)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include\freertos_evr.h)(0x598DD422)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x588BE5B4)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\projdefs.h)(0x598B214C)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\portable.h)(0x598B214C)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\deprecated_definitions.h)(0x598B214C)
@@ -428,7 +506,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BE5B4)
 I (.\RTE\RTOS\FreeRTOSConfig.h)(0x598B2142)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include\freertos_evr.h)(0x598DD422)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x588BE5B4)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\projdefs.h)(0x598B214C)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\portable.h)(0x598B214C)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\deprecated_definitions.h)(0x598B214C)
@@ -443,7 +521,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BE5B4)
 I (.\RTE\RTOS\FreeRTOSConfig.h)(0x598B2142)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include\freertos_evr.h)(0x598DD422)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x588BE5B4)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\projdefs.h)(0x598B214C)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\portable.h)(0x598B214C)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\deprecated_definitions.h)(0x598B214C)
@@ -459,7 +537,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x588BE5B4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BE5B4)
 I (.\RTE\RTOS\FreeRTOSConfig.h)(0x598B2142)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include\freertos_evr.h)(0x598DD422)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\projdefs.h)(0x598B214C)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\portable.h)(0x598B214C)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\deprecated_definitions.h)(0x598B214C)
@@ -476,7 +554,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x588BE5B4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BE5B4)
 I (.\RTE\RTOS\FreeRTOSConfig.h)(0x598B2142)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include\freertos_evr.h)(0x598DD422)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\projdefs.h)(0x598B214C)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\portable.h)(0x598B214C)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\deprecated_definitions.h)(0x598B214C)
@@ -494,7 +572,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BE5B4)
 I (.\RTE\RTOS\FreeRTOSConfig.h)(0x598B2142)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\CMSIS\RTOS2\FreeRTOS\Include\freertos_evr.h)(0x598DD422)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x588BE5B4)
-I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A11BCB5)
+I (.\RTE\_TetraplegicRealTimeAssistant\RTE_Components.h)(0x5A12ECB0)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\projdefs.h)(0x598B214C)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\portable.h)(0x598B214C)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS-FreeRTOS\9.1.0\Source\include\deprecated_definitions.h)(0x598B214C)

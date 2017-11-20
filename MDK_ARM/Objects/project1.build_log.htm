@@ -22,43 +22,45 @@ Dialog DLL:      TCM.DLL V1.32.0.0
  
 <h2>Project:</h2>
 C:\emb\projeto_1\MDK_ARM\project1.uvprojx
-Project File Date:  11/19/2017
+Project File Date:  11/20/2017
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 5 (build 528)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Rebuild target 'TetraplegicRealTimeAssistant'
 compiling i2cModule.c...
-compiling spiModule.c...
-compiling gyroscopeDriver.c...
-compiling main.c...
 compiling I2S_Module.c...
 compiling oximeterDriver.c...
 compiling MicrophoneDriver.c...
+compiling gyroscopeDriver.c...
+compiling spiModule.c...
+compiling main.c...
 compiling pushButtonDriver.c...
-compiling buzzerDriver.c...
 compiling misc.c...
+compiling buzzerDriver.c...
+compiling stm32f4xx_i2c.c...
 compiling stm32f4xx_gpio.c...
+compiling stm32f4xx_dma.c...
 compiling trasnceiverDriver.c...
-..\src\trasnceiverDriver.c(37): warning:  #177-D: function "gpioInit"  was declared but never referenced
-  static void gpioInit(void)
+..\src\trasnceiverDriver.c(211): warning:  #111-D: statement is unreachable
+  		switch(newMode)
 ..\src\trasnceiverDriver.c: 1 warning, 0 errors
 compiling stm32f4xx_rcc.c...
-compiling stm32f4xx_i2c.c...
 assembling startup_stm32f40_41xxx.s...
-compiling stm32f4xx_rtc.c...
-compiling list.c...
 compiling freertos_evr.c...
+compiling list.c...
 compiling heap_2.c...
-compiling port.c...
-compiling queue.c...
 compiling stm32f4xx_spi.c...
-compiling stm32f4xx_dma.c...
 compiling system_stm32f4xx.c...
-compiling tasks.c...
+compiling stm32f4xx_exti.c...
+compiling stm32f4xx_syscfg.c...
+compiling port.c...
+compiling stm32f4xx_rtc.c...
 compiling stm32f4xx_tim.c...
+compiling queue.c...
 compiling timers.c...
+compiling tasks.c...
 linking...
-Program Size: Code=14676 RO-data=424 RW-data=908 ZI-data=70596  
+Program Size: Code=14732 RO-data=424 RW-data=908 ZI-data=70596  
 ".\Objects\project1.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
@@ -83,12 +85,14 @@ Package Vendor: Keil
                 Keil.STM32F4xx_DFP.1.0.8
                 STMicroelectronics STM32F4 Series Device Support, Drivers and Examples
    * Component: TIM Version: 1.3.0
+   * Component: SYSCFG Version: 1.3.0
    * Component: SPI Version: 1.3.0
    * Component: RTC Version: 1.3.0
    * Component: RCC Version: 1.3.0
    * Component: I2C Version: 1.3.0
    * Component: GPIO Version: 1.3.0
    * Component: Framework Version: 1.3.1
+   * Component: EXTI Version: 1.3.0
    * Component: DMA Version: 1.3.0
    * Component: Startup Version: 1.3.1
 
@@ -106,8 +110,12 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: Keil::Device:StdPeriph Drivers:TIM:1.3.0
-      Source file:   Device\StdPeriph_Driver\src\stm32f4xx_tim.c
       Include file:  Device\StdPeriph_Driver\inc\stm32f4xx_tim.h
+      Source file:   Device\StdPeriph_Driver\src\stm32f4xx_tim.c
+
+   * Component: Keil::Device:StdPeriph Drivers:SYSCFG:1.3.0
+      Source file:   Device\StdPeriph_Driver\src\stm32f4xx_syscfg.c
+      Include file:  Device\StdPeriph_Driver\inc\stm32f4xx_syscfg.h
 
    * Component: Keil::Device:StdPeriph Drivers:SPI:1.3.0
       Include file:  Device\StdPeriph_Driver\inc\stm32f4xx_spi.h
@@ -118,34 +126,38 @@ Package Vendor: Keil
       Source file:   Device\StdPeriph_Driver\src\stm32f4xx_rtc.c
 
    * Component: Keil::Device:StdPeriph Drivers:RCC:1.3.0
-      Source file:   Device\StdPeriph_Driver\src\stm32f4xx_rcc.c
       Include file:  Device\StdPeriph_Driver\inc\stm32f4xx_rcc.h
+      Source file:   Device\StdPeriph_Driver\src\stm32f4xx_rcc.c
 
    * Component: Keil::Device:StdPeriph Drivers:I2C:1.3.0
-      Include file:  Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h
       Source file:   Device\StdPeriph_Driver\src\stm32f4xx_i2c.c
+      Include file:  Device\StdPeriph_Driver\inc\stm32f4xx_i2c.h
 
    * Component: Keil::Device:StdPeriph Drivers:GPIO:1.3.0
-      Source file:   Device\StdPeriph_Driver\src\stm32f4xx_gpio.c
       Include file:  Device\StdPeriph_Driver\inc\stm32f4xx_gpio.h
+      Source file:   Device\StdPeriph_Driver\src\stm32f4xx_gpio.c
 
    * Component: Keil::Device:StdPeriph Drivers:Framework:1.3.1
+      Source file:   Device\StdPeriph_Driver\templates\stm32f4xx_conf.h
       Source file:   Device\StdPeriph_Driver\templates\stm32f4xx_it.c
       Source file:   Device\StdPeriph_Driver\src\misc.c
       Include file:  Device\StdPeriph_Driver\templates\stm32f4xx_it.h
-      Source file:   Device\StdPeriph_Driver\templates\stm32f4xx_conf.h
+
+   * Component: Keil::Device:StdPeriph Drivers:EXTI:1.3.0
+      Include file:  Device\StdPeriph_Driver\inc\stm32f4xx_exti.h
+      Source file:   Device\StdPeriph_Driver\src\stm32f4xx_exti.c
 
    * Component: Keil::Device:StdPeriph Drivers:DMA:1.3.0
       Source file:   Device\StdPeriph_Driver\src\stm32f4xx_dma.c
       Include file:  Device\StdPeriph_Driver\inc\stm32f4xx_dma.h
 
    * Component: Keil::Device:Startup:1.3.1
-      Source file:   Device\Source\ARM\startup_stm32f40_41xxx.s
-      Include file:  Device\Include\stm32f4xx.h
       Source file:   Device\Source\ARM\STM32F40xxx_41xxx_OPT.s
-      Include file:  RTE_Driver\Config\RTE_Device.h
-      Source file:   Device\Source\system_stm32f4xx.c
+      Source file:   Device\Source\ARM\startup_stm32f40_41xxx.s
       Source file:   Device\Source\ARM\STM32F4xx_OTP.s
+      Include file:  Device\Include\stm32f4xx.h
+      Source file:   Device\Source\system_stm32f4xx.c
+      Include file:  RTE_Driver\Config\RTE_Device.h
 
    * Component: ARM::CMSIS:CORE:5.0.2
 
@@ -157,16 +169,16 @@ Package Vendor: Keil
       Source file:   Source\portable\MemMang\heap_2.c
 
    * Component: ARM.FreeRTOS::RTOS:Core:9.0.0
-      Include file:  CMSIS\RTOS2\FreeRTOS\Include\freertos_evr.h
-      Source file:   CMSIS\RTOS2\FreeRTOS\Source\freertos_evr.c
+      Source file:   Source\portable\RVDS\ARM_CM4F\port.c
+      Include file:  Source\include\FreeRTOS.h
       Include file:  Source\include\semphr.h
       Include file:  Source\include\task.h
-      Include file:  Source\include\FreeRTOS.h
-      Include file:  Source\include\queue.h
       Source file:   Source\list.c
+      Include file:  Source\include\queue.h
       Source file:   Source\queue.c
       Source file:   Source\tasks.c
-      Source file:   Source\portable\RVDS\ARM_CM4F\port.c
+      Include file:  CMSIS\RTOS2\FreeRTOS\Include\freertos_evr.h
+      Source file:   CMSIS\RTOS2\FreeRTOS\Source\freertos_evr.c
 
    * Component: ARM.FreeRTOS::RTOS:Config:FreeRTOS:9.0.0
       Include file:  Config\ARMCM\FreeRTOSConfig.h

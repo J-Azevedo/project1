@@ -1107,3 +1107,22 @@
 #define RF_DAGC_NORMAL              0x00  // Reset value
 #define RF_DAGC_IMPROVED_LOWBETA1   0x20
 #define RF_DAGC_IMPROVED_LOWBETA0   0x30  // Recommended default
+
+//Aes Register 
+#define RegAesKey1 0x3e
+#define RegAesKey2 0x3f
+#define RegAesKey3 0x40
+#define RegAesKey4 0x41
+#define RegAesKey5 0x42
+#define RegAesKey6 0x43
+#define RegAesKey7 0x44
+#define RegAesKey8 0x45
+#define RegAesKey9 0x46
+#define RegAesKey10 0x47
+#define RegAesKey11 0x48
+#define RegAesKey12 0x49
+#define RegAesKey13 0x4A
+#define RegAesKey14 0x4b
+#define RegAesKey15 0x4c
+#define RegAesKey16 0x4d
+
