@@ -50,7 +50,7 @@
 
 void transceiverInit(void);
 void changeMode(int newMode);
-
+void transmitData(const void *transferBuffer);
 
 
 

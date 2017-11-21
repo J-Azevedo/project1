@@ -3,7 +3,7 @@
 #include "stm32f4xx_gpio.h"             // Keil::Device:StdPeriph Drivers:GPIO
 #include "RFM69registers.h"
 #include "stm32f4xx_exti.h"             // Keil::Device:StdPeriph Drivers:EXTI
-
+#include "string.h"
 
 /******************************************************************************
 *								Public Variables
@@ -24,6 +24,7 @@
 *******************************************************************************/
 
    static volatile uint8_t _mode=0; //current mode
+	 static const int serverNode=0;
 /******************************************************************************
 *								Private Headers
 *******************************************************************************/
@@ -95,9 +96,44 @@ static void gpioInit(void)
 	
 
 	
-	//falta meter pino para interrupçao
+
 
 }
+static void timInit(void)
+{
+	
+	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef  TIM_OCInitStructure;
+	uint16_t PrescalerValue = 0;
+	uint16_t period=665;
+	 /* Compute the prescaler value */
+  PrescalerValue = (uint16_t) ((SystemCoreClock /2) / 28000000) - 1;//need to be reviewed later to get real values for our project
+
+  /* Time base configuration */
+  TIM_TimeBaseStructure.TIM_Period = period;
+  TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
+  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+
+  TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
+	
+	  /* PWM1 Mode configuration: Channe3 */
+  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+  TIM_OCInitStructure.TIM_Pulse = period/2;//duty cycle of 50%
+  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+
+  TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+
+  TIM_OC1PreloadConfig(TIM4, TIM_OCPreload_Enable);
+
+	
+	
+
+
+
+}
+
 static void writeReg(uint8_t addr, uint8_t value)
 {
 	//chip select 
@@ -120,6 +156,30 @@ static uint8_t  readReg(uint8_t addr)
 
 }
 
+static void sendFrame(const void *buffer)
+{
+	int bufferSize=0;
+	changeMode(RF69_MODE_STANDBY); // turn off receiver to prevent reception while filling fifo
+  while ((readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // wait for ModeReady
+  writeReg(REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_00); // DIO0 is "Packet Sent"
+	
+	GPIO_SetBits(GPIOA, GPIO_Pin_15); //put NSS pin to HIGH
+	SPI_I2S_SendData(SPI1, REG_FIFO | 0x80);
+	//First send address 
+	SPI_I2S_SendData(SPI1, serverNode );
+	bufferSize=strlen(buffer);
+	
+	for(int i=0; i<bufferSize;i++)
+	{
+		SPI_I2S_SendData(SPI1, ((uint16_t*) buffer)[i]);
+	}
+		GPIO_ResetBits(GPIOA, GPIO_Pin_15); //put NSS pin to LOW
+
+
+
+	changeMode(RF69_MODE_TX);
+	
+}
 
 
 
@@ -146,10 +206,10 @@ void transceiverInit(void)
 		/* 0x0D*/  { REG_LISTEN1, RF_LISTEN1_RESOL_RX_262000  |RF_LISTEN1_RESOL_IDLE_64 |RF_LISTEN1_CRITERIA_RSSIANDSYNC |RF_LISTEN1_END_01},//it goes to MODE when  PayloadReady or Timeout interrupt occurs	
     /* 0x0E*/  { REG_LISTEN2, RF_LISTEN2_COEF_IDLE}, // ListenCoefIdle is 1
 		/* 0x0F*/	 { REG_LISTEN3, RF_LISTEN3_COEFRX_VALUE}, // ListenCoefRX is 0x26
+	
 		// looks like PA1 and PA2 are not implemented on RFM69W, hence the max output power is 13dBm
     // +17dBm and +20dBm are possible on RFM69HW
     // +13dBm formula: Pout = -18 + OutputPower (with PA0 or PA1**)
-		
    /* 0x11 */ { REG_PALEVEL, RF_PALEVEL_PA0_ON | RF_PALEVEL_PA1_OFF | RF_PALEVEL_PA2_OFF | RF_PALEVEL_OUTPUTPOWER_11111},
    /* 0x13 */ { REG_OCP, RF_OCP_ON | RF_OCP_TRIM_95 }, // over current protection (default is 95mA)
 
@@ -207,6 +267,7 @@ void changeMode(int newMode)
 	if(newMode==_mode)
 	{
 		return;
+	}
 		
 		switch(newMode)
 		{
@@ -235,9 +296,11 @@ void changeMode(int newMode)
 				writeReg(REG_OPMODE, ((readReg(REG_OPMODE)&0xe3)|RF_OPMODE_LISTEN_ON));
 				
 			break;
-		}
 	}
+		
+	//qualquer coisa para limpar semaphore se ouver algum taken
 }
+
 
 /* Handle PD0 interrupt */
 void EXTI0_IRQHandler(void) {
@@ -245,8 +308,48 @@ void EXTI0_IRQHandler(void) {
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
 		/* Do your stuff when PD0 is changed */
 		
+	/* we take the semaphore that is shared with the Transmit Data() so the transmit data can continue -> the semaphore can be taken here
+		and if we are waiting for an ACK and the overflow time finishes we can also take it in the timer ISR*/  	
+
+		
 		
 		/* Clear interrupt flag */
 		EXTI_ClearITPendingBit(EXTI_Line0);
 	}
+}
+
+
+
+void transmitData(const void *transferBuffer)
+{
+	/*first and most important we stop the scheduler because the transmission of data is the most critical part 
+	of our system and we can't have problems in this part	*/ //->review if this should be a critical section or not
+	
+	/*send the frame through the transeiver using the sendFrame() function*/
+	
+	/*now we wait for the semaphore to be taken to continue the execution of the function
+	when the semaphore is taken in this case it signals that the transmission ended
+		while((xSemaphoreGive()!=pdTRUE));
+	*/
+	
+	/* after the message was correctly transmited we change our transceiver to listen mode 
+	so it is listening and waiting to receive an ACK
+	changeMode(Listen);
+	and after that we start the timer fot the time we will wait until we retransmit the message
+	  TIM_Cmd(TIMX, ENABLE);
+		*/
+	
+		/*now we wait for the semaphore to be taken to continue the execution of the function
+	when the semaphore is taken in this case it signals we received and ACK or that the time we wait for the ACK ended and we have to 
+	resend the package
+		while((xSemaphoreGive()!=pdTRUE));
+	*/
+	
+	/*
+		if the message was received we end the function and leave the critical section->->review if this should be a critical section or not
+		if we did not receive the ACK we retransmit the message
+	*/
+
+
+
 }
