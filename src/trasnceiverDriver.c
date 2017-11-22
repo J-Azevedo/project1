@@ -32,7 +32,8 @@
 static void gpioInit(void);
 static void writeReg(uint8_t addr, uint8_t value);
 static uint8_t  readReg(uint8_t addr);
-
+static void sendFrame(const void *buffer);
+static void timInit(void);
 
 
 /*****************************************************************************
