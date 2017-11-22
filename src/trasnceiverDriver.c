@@ -101,10 +101,11 @@ static void gpioInit(void)
 }
 static void timInit(void)
 {
-	
+  NVIC_InitTypeDef NVIC_InitStruct;
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef  TIM_OCInitStructure;
-	uint16_t PrescalerValue = 0;
+	
+	uint16_t PrescalerValue = 0; //get this right to the specific clock value
 	uint16_t period=665;
 	 /* Compute the prescaler value */
   PrescalerValue = (uint16_t) ((SystemCoreClock /2) / 28000000) - 1;//need to be reviewed later to get real values for our project
@@ -115,20 +116,18 @@ static void timInit(void)
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 
-  TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
+  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
 	
-	  /* PWM1 Mode configuration: Channe3 */
-  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-  TIM_OCInitStructure.TIM_Pulse = period/2;//duty cycle of 50%
-  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
-  TIM_OC1Init(TIM3, &TIM_OCInitStructure);
 
-  TIM_OC1PreloadConfig(TIM4, TIM_OCPreload_Enable);
-
+	TIM_ITConfig(TIM3, TIM_IT_Update,ENABLE);
 	
 	
+	NVIC_InitStruct.NVIC_IRQChannel = TIM3_IRQn;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStruct);
 
 
 
@@ -318,6 +317,15 @@ void EXTI0_IRQHandler(void) {
 	}
 }
 
+
+void TIM2_IRQHandler()
+{
+    if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
+    {
+        TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+        GPIO_ToggleBits(GPIOD, GPIO_Pin_12);//for now this pin is beign toggled for testing
+    }
+}
 
 
 void transmitData(const void *transferBuffer)
