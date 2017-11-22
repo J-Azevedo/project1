@@ -55,13 +55,14 @@ typedef enum
       L3GD20_REGISTER_INT1_DURATION       = 0x38    // 00000000   rw
 } l3gd20Registers_t;
 
-typedef struct l3gd20Data_s
+typedef struct l3gd20Data_t
 {
   float x;
   float y;
   float z;
 } l3gd20Data;
 
+extern l3gd20Data data;
 		
 void gyroInit(void);
 int gyroStart(void);
