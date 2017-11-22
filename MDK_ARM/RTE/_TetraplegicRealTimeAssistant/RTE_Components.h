@@ -24,6 +24,7 @@
 #define RTE_DEVICE_STDPERIPH_RTC
 #define RTE_DEVICE_STDPERIPH_SPI
 #define RTE_DEVICE_STDPERIPH_TIM
+#define RTE_DEVICE_STDPERIPH_USART
 #define RTE_RTOS_FreeRTOS_CONFIG        /* RTOS FreeRTOS Config for FreeRTOS API */
 #define RTE_RTOS_FreeRTOS_CORE          /* RTOS FreeRTOS Core */
 #define RTE_RTOS_FreeRTOS_HEAP_2        /* RTOS FreeRTOS Heap 2 */

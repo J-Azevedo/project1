@@ -4,29 +4,30 @@
 
 void spiInit()
 {
-	SPI_InitTypeDef *SPI_InitStruct;
+	SPI_InitTypeDef SPI_InitStruct;
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE); //enable peripheral clock
 
 	/* Initialize the SPI_Direction member */
-  SPI_InitStruct->SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+  SPI_InitStruct.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
   /* initialize the SPI_Mode member */
-  SPI_InitStruct->SPI_Mode = SPI_Mode_Slave;
+  SPI_InitStruct.SPI_Mode = SPI_Mode_Master;
   /* initialize the SPI_DataSize member */
-  SPI_InitStruct->SPI_DataSize = SPI_DataSize_8b;
+  SPI_InitStruct.SPI_DataSize = SPI_DataSize_8b;
   /* Initialize the SPI_CPOL member */
-  SPI_InitStruct->SPI_CPOL = SPI_CPOL_Low;
+  SPI_InitStruct.SPI_CPOL = SPI_CPOL_Low;
   /* Initialize the SPI_CPHA member */
-  SPI_InitStruct->SPI_CPHA = SPI_CPHA_1Edge;
+  SPI_InitStruct.SPI_CPHA = SPI_CPHA_1Edge;
   /* Initialize the SPI_NSS member */
-  SPI_InitStruct->SPI_NSS = SPI_NSS_Hard;
+  SPI_InitStruct.SPI_NSS = SPI_NSS_Soft | SPI_NSSInternalSoft_Set;
   /* Initialize the SPI_BaudRatePrescaler member */
-  SPI_InitStruct->SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
+  SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
   /* Initialize the SPI_FirstBit member */
-  SPI_InitStruct->SPI_FirstBit = SPI_FirstBit_MSB;
+  SPI_InitStruct.SPI_FirstBit = SPI_FirstBit_MSB;
   /* Initialize the SPI_CRCPolynomial member */
-  SPI_InitStruct->SPI_CRCPolynomial = 7;
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE); //enable peripheral clock	
+  SPI_InitStruct.SPI_CRCPolynomial = 7;
 	
-	SPI_Init(SPI1, SPI_InitStruct); //this function applies the configurations made above
+	SPI_Init(SPI1, &SPI_InitStruct); //this function applies the configurations made above
 
 	/**
   * @brief  Enables or disables the specified SPI peripheral.
@@ -36,5 +37,6 @@ void spiInit()
   * @retval None
   */
 	SPI_Cmd(SPI1, ENABLE);
+	
 }
 
