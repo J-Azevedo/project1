@@ -35,8 +35,8 @@ static void timInit(void)
 	
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 TIM_OCInitTypeDef  TIM_OCInitStructure;
-	uint16_t PrescalerValue = 0;
-	uint16_t period=665;
+	uint16_t PrescalerValue = 0; //get this right to the specific clock value
+	uint16_t period=665; 
 	 /* Compute the prescaler value */
   PrescalerValue = (uint16_t) ((SystemCoreClock /2) / 28000000) - 1;//need to be reviewed later to get real values for our project
 
