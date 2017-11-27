@@ -20,10 +20,10 @@
 //frequencies
 #define RF69_433MHZ            43
 //networwk id
-#define networkID  						  1
+#define networkID  						  10
 
 //node ID
-#define nodeID                  3
+#define nodeID                  4
 //chyper key-> 
 #define CHYPHER_KEY_1 0xea
 #define CHYPHER_KEY_2 0xdb

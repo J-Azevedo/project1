@@ -16,7 +16,9 @@
 *								Private Variables
 *******************************************************************************/
 
-
+static int alarm=0;
+static RTC_AlarmTypeDef RTC_AlarmStructure;
+static RTC_TimeTypeDef RTC_AlarmTime;
 
 /******************************************************************************
 *								Private Headers
@@ -24,7 +26,7 @@
 
 static void rtcInit(void);
 static void alarmInit(void);
-
+static void alarmTimeUpdate(void);
 
 /*****************************************************************************
 *			Private Functions
@@ -86,7 +88,7 @@ static void rtcInit(void)
 static void alarmInit(void)
 {
 	EXTI_InitTypeDef EXTI_InitStructure;
-  RTC_AlarmTypeDef RTC_AlarmStructure;
+
   NVIC_InitTypeDef NVIC_InitStructure;
   
   /* EXTI configuration */
@@ -103,16 +105,61 @@ static void alarmInit(void)
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
- 
+	
+	RTC_WriteProtectionCmd(DISABLE);
+	RTC_AlarmCmd(RTC_Alarm_A,DISABLE);
+	while(RTC_GetFlagStatus(RTC_FLAG_ALRAWF)!=1)
+	{};
+	
+
+	
   /* Set the alarm A Masks */
-  RTC_AlarmStructure.RTC_AlarmMask = RTC_AlarmMask_All;
-  RTC_SetAlarm(RTC_Format_BCD, RTC_Alarm_A, &RTC_AlarmStructure);
+  RTC_AlarmStructure.RTC_AlarmMask = RTC_AlarmMask_Hours;
+	alarmTimeUpdate();
+
   
-  /* Set alarm A sub seconds and enable SubSec Alarm : generate 8 interrupts per Second */
-  //RTC_AlarmSubSecondConfig(RTC_Alarm_A, 0xFF, RTC_AlarmSubSecondMask_SS14_5);->see this at home
 
   /* Enable alarm A interrupt */
 	RTC_ITConfig(RTC_IT_ALRA, ENABLE);
+	RTC_AlarmCmd(RTC_Alarm_A,ENABLE);
+	RTC_WriteProtectionCmd(ENABLE);
+	alarm=0;
+
+
+
+}
+
+static void alarmTimeUpdate()
+{
+
+	//set the correct hour for the first alarm
+	switch(alarm)
+	{
+		case 0:
+						RTC_AlarmTime.RTC_Hours=0x8;
+						RTC_AlarmTime.RTC_Minutes=00;
+						RTC_AlarmTime.RTC_Seconds=00;
+						RTC_AlarmStructure.RTC_AlarmTime=RTC_AlarmTime;
+						alarm=1;
+		break;
+		case 1:
+						RTC_AlarmTime.RTC_Hours=16;
+						RTC_AlarmTime.RTC_Minutes=00;
+						RTC_AlarmTime.RTC_Seconds=00;
+						RTC_AlarmStructure.RTC_AlarmTime=RTC_AlarmTime;
+						alarm=2;
+
+		break;
+		case 2:
+						RTC_AlarmTime.RTC_Hours=00;
+						RTC_AlarmTime.RTC_Minutes=00;
+						RTC_AlarmTime.RTC_Seconds=00;
+						RTC_AlarmStructure.RTC_AlarmTime=RTC_AlarmTime;
+						alarm=0;
+		break;
+
+	}
+	RTC_SetAlarm(RTC_Format_BCD, RTC_Alarm_A, &RTC_AlarmStructure);
 
 
 }
@@ -135,7 +182,10 @@ void RTC_Alarm_IRQHandler(void)
 	/* Make sure that interrupt flag is set */
 	if (EXTI_GetITStatus(EXTI_Line17) != RESET) {
 		/* Do your stuff when rtc alarm*/
-		
+
+		//update the alarm for the next one
+		alarmTimeUpdate();
+
 		/*in this interrupt we create a message for update with the current value of heart rate*/
 		
 

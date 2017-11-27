@@ -25,7 +25,7 @@
 *******************************************************************************/
 
    static volatile uint8_t _mode=0; //current mode
-	 static const int serverNode=0;
+	 static const int serverNode=3;
 	 static int ackReceived=0;
 	typedef enum {NOTRECEIVED = 0, RECEIVED = 1} ackState;
 /******************************************************************************
@@ -256,7 +256,7 @@ void transceiverInit(void)
 	/*we initialize the pins we need*/
 	gpioInit();
 	/*initialize the timer*/
-	timInit();
+	//timInit();
  
  /*write our configurations in the transceiver*/
   for (uint8_t i = 0; CONFIG[i][0] != 255; i++)
@@ -367,7 +367,8 @@ while(ackReceived!=RECEIVED)
 	*/
 	//to be implemented later
 	/*clear the ack received flag to guarantue that there isn't an false positive ack*/
-	ackReceived=NOTRECEIVED;
+	while(ackReceived!=RECEIVED);
+	//ackReceived=NOTRECEIVED;
 	/* after the message was correctly transmited we change our transceiver to listen mode 
 	so it is listening and waiting to receive an ACK
 	changeMode(Listen);
