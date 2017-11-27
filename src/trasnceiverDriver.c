@@ -4,6 +4,7 @@
 #include "RFM69registers.h"
 #include "stm32f4xx_exti.h"             // Keil::Device:StdPeriph Drivers:EXTI
 #include "string.h"
+//#include "startup_stm32f40_41xxx.s"
 
 /******************************************************************************
 *								Public Variables
@@ -25,6 +26,8 @@
 
    static volatile uint8_t _mode=0; //current mode
 	 static const int serverNode=0;
+	 static int ackReceived=0;
+	typedef enum {NOTRECEIVED = 0, RECEIVED = 1} ackState;
 /******************************************************************************
 *								Private Headers
 *******************************************************************************/
@@ -69,11 +72,11 @@ static void gpioInit(void)
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_Init(GPIOD, &GPIO_InitStruct);
     
-	/* Tell system that you will use PD0 for EXTI_Line0 */
+	/* Tell system that you will use PD11 for EXTI_Line0 */
 	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource0);
     
-	/* PD0 is connected to EXTI_Line0 */
-	EXTI_InitStruct.EXTI_Line = EXTI_Line0;
+	/* PD11 is connected to EXTI_Line0 */
+	EXTI_InitStruct.EXTI_Line = EXTI_Line11;
 	/* Enable interrupt */
 	EXTI_InitStruct.EXTI_LineCmd = ENABLE;
 	/* Interrupt mode */
@@ -84,8 +87,8 @@ static void gpioInit(void)
 	EXTI_Init(&EXTI_InitStruct);
  
 	/* Add IRQ vector to NVIC */
-	/* PD1 is connected to EXTI_Line0, which has EXTI0_IRQn vector */
-	NVIC_InitStruct.NVIC_IRQChannel = EXTI0_IRQn;
+	/* PD11 is connected to EXTI_Line11, which has EXTI0_IRQn vector */
+	NVIC_InitStruct.NVIC_IRQChannel = EXTI15_10_IRQn ;
 	/* Set priority */
 	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0x00;
 	/* Set sub priority */
@@ -104,7 +107,6 @@ static void timInit(void)
 {
   NVIC_InitTypeDef NVIC_InitStruct;
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-	TIM_OCInitTypeDef  TIM_OCInitStructure;
 	
 	uint16_t PrescalerValue = 0; //get this right to the specific clock value
 	uint16_t period=665;
@@ -120,7 +122,7 @@ static void timInit(void)
   TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
 	
 
-
+	/*timer interrupt configuration*/
 	TIM_ITConfig(TIM3, TIM_IT_Update,ENABLE);
 	
 	
@@ -164,20 +166,20 @@ static void sendFrame(const void *buffer)
   writeReg(REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_00); // DIO0 is "Packet Sent"
 	
 	GPIO_SetBits(GPIOA, GPIO_Pin_15); //put NSS pin to HIGH
-	SPI_I2S_SendData(SPI1, REG_FIFO | 0x80);
+	SPI_I2S_SendData(SPI1, REG_FIFO | 0x80);//send data to start writing into the FIFO
 	//First send address 
-	SPI_I2S_SendData(SPI1, serverNode );
-	bufferSize=strlen(buffer);
+	SPI_I2S_SendData(SPI1, serverNode );//send the node of server
+	bufferSize=strlen(buffer);//find the length of the buffer we want to transmit
 	
 	for(int i=0; i<bufferSize;i++)
 	{
-		SPI_I2S_SendData(SPI1, ((uint16_t*) buffer)[i]);
+		SPI_I2S_SendData(SPI1, ((uint16_t*) buffer)[i]);//transmit the message through the spi
 	}
 		GPIO_ResetBits(GPIOA, GPIO_Pin_15); //put NSS pin to LOW
 
 
 
-	changeMode(RF69_MODE_TX);
+	changeMode(RF69_MODE_TX);//change the mode to transmit the value that we wrote in to the FIFO
 	
 }
 
@@ -192,15 +194,16 @@ static void sendFrame(const void *buffer)
 void transceiverInit(void)
 {
 	//ver melhor sitio para por estas configuraçoes
+	/*configurations for the transceiver*/
   const uint8_t CONFIG[][2] =
   {
-    /* 0x01 */ { REG_OPMODE, RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY },
+    /* 0x01 */ { REG_OPMODE, RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY },//turn on the sequencer, turn off listen, put the transceiver on standby
     /* 0x02 */ { REG_DATAMODUL, RF_DATAMODUL_DATAMODE_PACKET | RF_DATAMODUL_MODULATIONTYPE_FSK | RF_DATAMODUL_MODULATIONSHAPING_00 }, // no shaping
     /* 0x03 */ { REG_BITRATEMSB, RF_BITRATEMSB_250000   }, // speed of 250kbps->might be to fast testing needed
     /* 0x04 */ { REG_BITRATELSB, RF_BITRATELSB_250000},
     /* 0x05 */ { REG_FDEVMSB, RF_FDEVMSB_50000}, // default: 5KHz, (FDEV + BitRate / 2 <= 500KHz)
     /* 0x06 */ { REG_FDEVLSB, RF_FDEVLSB_50000},	
-    /* 0x07 */ { REG_FRFMSB, (uint8_t) RF_FRFMSB_433    },
+    /* 0x07 */ { REG_FRFMSB, (uint8_t) RF_FRFMSB_433    },//put frequency of 433 MH<
     /* 0x08 */ { REG_FRFMID, (uint8_t)RF_FRFMID_433 },
     /* 0x09 */ { REG_FRFLSB, (uint8_t) RF_FRFLSB_433 },
 		/* 0x0D*/  { REG_LISTEN1, RF_LISTEN1_RESOL_RX_262000  |RF_LISTEN1_RESOL_IDLE_64 |RF_LISTEN1_CRITERIA_RSSIANDSYNC |RF_LISTEN1_END_01},//it goes to MODE when  PayloadReady or Timeout interrupt occurs	
@@ -225,7 +228,7 @@ void transceiverInit(void)
     /* 0x2F */ { REG_SYNCVALUE1, 0x2D },      // sync value
     /* 0x30 */ { REG_SYNCVALUE2, networkID }, // NETWORK ID
     /* 0x37 */ { REG_PACKETCONFIG1, RF_PACKET1_FORMAT_FIXED | RF_PACKET1_DCFREE_OFF | RF_PACKET1_CRC_ON | RF_PACKET1_CRCAUTOCLEAR_ON | RF_PACKET1_ADRSFILTERING_NODE },
-    /* 0x38 */ { REG_PAYLOADLENGTH, 0xa }, // packet length of 10 bytes -> also needs testing
+    /* 0x38 */ { REG_PAYLOADLENGTH, 0x07 }, // packet length of 10 bytes -> also needs testing
 		/* 0x39 */ { REG_NODEADRS, nodeID }, // turned off because we're not using address filtering
     /* 0x3C */ { REG_FIFOTHRESH, RF_FIFOTHRESH_TXSTART_FIFONOTEMPTY | RF_FIFOTHRESH_VALUE }, // TX on FIFO not empty ->also need test
 		//need to test deçay
@@ -250,13 +253,16 @@ void transceiverInit(void)
     {255, 0}
  };
 
-
-	gpioInit();//falta meter aqui interrupçao do pino
-
+	/*we initialize the pins we need*/
+	gpioInit();
+	/*initialize the timer*/
+	timInit();
+ 
+ /*write our configurations in the transceiver*/
   for (uint8_t i = 0; CONFIG[i][0] != 255; i++)
     writeReg(CONFIG[i][0], CONFIG[i][1]);
  
-	changeMode(RF69_MODE_SLEEP);
+	changeMode(RF69_MODE_SLEEP);//put the transceiver in sleep
 
 
 }
@@ -271,26 +277,27 @@ void changeMode(int newMode)
 		
 		switch(newMode)
 		{
+			/*change mode to transmiter*/
 			case RF69_MODE_TX:
 				writeReg(REG_OPMODE, ((readReg(REG_OPMODE)&0xe3)|RF_OPMODE_TRANSMITTER));
 				
 			break;
-			
+			/*change mode to receiver*/
 			case RF69_MODE_RX:
 				writeReg(REG_OPMODE, ((readReg(REG_OPMODE)&0xe3)|RF_OPMODE_RECEIVER));
 				
 			break;
-			
+			/*change mode to sleep*/
 			case RF69_MODE_SLEEP:
 				writeReg(REG_OPMODE, ((readReg(REG_OPMODE)&0xe3)|RF_OPMODE_SLEEP));
 				
 			break;
-			
+			/*change mode to standby*/
 			case RF69_MODE_STANDBY:
 				writeReg(REG_OPMODE, ((readReg(REG_OPMODE)&0xe3)|RF_OPMODE_STANDBY));
 				
 			break;
-			
+			/*change mode to listen*/
 			case RF69_MODE_LISTEN:
 				writeReg(REG_OPMODE, ((readReg(REG_OPMODE)&0xe3)|RF_OPMODE_STANDBY));
 				writeReg(REG_OPMODE, ((readReg(REG_OPMODE)&0xe3)|RF_OPMODE_LISTEN_ON));
@@ -302,30 +309,46 @@ void changeMode(int newMode)
 }
 
 
-/* Handle PD0 interrupt */
-void EXTI0_IRQHandler(void) {
+/* Handle PD11 interrupt */
+void EXTI15_10_IRQHandler(void)
+	{
 	/* Make sure that interrupt flag is set */
-	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
+	if (EXTI_GetITStatus(EXTI_Line11) != RESET) {
 		/* Do your stuff when PD0 is changed */
 		
 	/* we take the semaphore that is shared with the Transmit Data() so the transmit data can continue -> the semaphore can be taken here
 		and if we are waiting for an ACK and the overflow time finishes we can also take it in the timer ISR*/  	
-
 		
+		/*we indicate that the ack was received*/
+			ackReceived=RECEIVED;
 		
 		/* Clear interrupt flag */
-		EXTI_ClearITPendingBit(EXTI_Line0);
+		EXTI_ClearITPendingBit(EXTI_Line11);
+					/*
+			before we exit the interrupt we have to stop the timer so it doesn't occur a overflow that migth create an error in our program
+					TIM_Cmd(TIM3, DISABLE);
+			*/
 	}
 }
 
 
-void TIM2_IRQHandler()
+void TIM3_IRQHandler()
 {
     if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
     {
         TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
         GPIO_ToggleBits(GPIOD, GPIO_Pin_12);//for now this pin is beign toggled for testing
-    }
+				ackReceived=NOTRECEIVED;
+			/*
+			if this happens we take the semaphore and change some variable to signal that we have to re-transmit the message
+			
+			*/
+			/*
+			before we exit the interrupt we have to stop the timer
+					TIM_Cmd(TIM3, DISABLE);
+			*/
+		
+		}
 }
 
 
@@ -333,20 +356,26 @@ void transmitData(const void *transferBuffer)
 {
 	/*first and most important we stop the scheduler because the transmission of data is the most critical part 
 	of our system and we can't have problems in this part	*/ //->review if this should be a critical section or not
-	
+	//to be implemented later
+while(ackReceived!=RECEIVED)
+{
 	/*send the frame through the transeiver using the sendFrame() function*/
-	
+	sendFrame(transferBuffer);
 	/*now we wait for the semaphore to be taken to continue the execution of the function
 	when the semaphore is taken in this case it signals that the transmission ended
 		while((xSemaphoreGive()!=pdTRUE));
 	*/
-	
+	//to be implemented later
+	/*clear the ack received flag to guarantue that there isn't an false positive ack*/
+	ackReceived=NOTRECEIVED;
 	/* after the message was correctly transmited we change our transceiver to listen mode 
 	so it is listening and waiting to receive an ACK
 	changeMode(Listen);
 	and after that we start the timer fot the time we will wait until we retransmit the message
 	  TIM_Cmd(TIMX, ENABLE);
 		*/
+	changeMode(RF69_MODE_LISTEN);
+	TIM_Cmd(TIM3, ENABLE);
 	
 		/*now we wait for the semaphore to be taken to continue the execution of the function
 	when the semaphore is taken in this case it signals we received and ACK or that the time we wait for the ACK ended and we have to 
@@ -354,11 +383,13 @@ void transmitData(const void *transferBuffer)
 		while((xSemaphoreGive()!=pdTRUE));
 	*/
 	
+}
 	/*
 		if the message was received we end the function and leave the critical section->->review if this should be a critical section or not
 		if we did not receive the ACK we retransmit the message
 	*/
-
+	/*here we leave the critical section*/
+	//to be implemented later
 
 
 }
