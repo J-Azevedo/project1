@@ -13,7 +13,7 @@
 
 #include "stm32f4xx.h"
 
-#define L3GD20_ADDRESS                (0x6B)        // 1101011
+#define L3GD20_ADDRESS                (0x6B)        // 110101+1 0x35+SDO on
 #define L3GD20_POLL_TIMEOUT           (100)         // Maximum number of read attempts
 #define L3GD20_ID                     0xD4
 #define L3GD20H_ID                    0xD7
@@ -22,6 +22,8 @@
 #define L3GD20_SENSITIVITY_500DPS  (0.0175F)       // Roughly 45/256
 #define L3GD20_SENSITIVITY_2000DPS (0.070F)        // Roughly 18/256
 #define L3GD20_DPS_TO_RADS         (0.017453293F)  // degress/s to rad/s multiplier
+
+#define DUMMY_BYTE 										0xFF
 
 typedef enum {ONE_TIME, MULTIPLE_TIMES} readingType;
   
@@ -68,6 +70,9 @@ void gyroInit(void);
 int gyroStart(void);
 void gyroWrite(l3gd20Registers_t, uint8_t);
 uint8_t gyroRead(l3gd20Registers_t, readingType);
+//uint16_t gyroTransmit(uint8_t);
+uint8_t gyroTransmit(uint8_t);
+
 
 #endif /*__GYROSCOPE_H__*/
 

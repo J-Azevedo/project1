@@ -26,6 +26,8 @@
 
 
 void microphoneInit(unsigned int rate);
+void microphoneStop(void);
+void microphoneStart(void);
 
 
 

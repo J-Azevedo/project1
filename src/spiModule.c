@@ -5,6 +5,7 @@
 void spiInit()
 {
 	SPI_InitTypeDef SPI_InitStruct;
+	SPI_StructInit(&SPI_InitStruct);
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE); //enable peripheral clock
 
@@ -13,15 +14,16 @@ void spiInit()
   /* initialize the SPI_Mode member */
   SPI_InitStruct.SPI_Mode = SPI_Mode_Master;
   /* initialize the SPI_DataSize member */
-  SPI_InitStruct.SPI_DataSize = SPI_DataSize_8b;
+  //SPI_InitStruct.SPI_DataSize = SPI_DataSize_16b;
+	SPI_InitStruct.SPI_DataSize = SPI_DataSize_8b;
   /* Initialize the SPI_CPOL member */
   SPI_InitStruct.SPI_CPOL = SPI_CPOL_Low;
   /* Initialize the SPI_CPHA member */
   SPI_InitStruct.SPI_CPHA = SPI_CPHA_1Edge;
   /* Initialize the SPI_NSS member */
-  SPI_InitStruct.SPI_NSS = SPI_NSS_Soft | SPI_NSSInternalSoft_Set;
+  SPI_InitStruct.SPI_NSS = SPI_NSS_Soft;
   /* Initialize the SPI_BaudRatePrescaler member */
-  SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
+  SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16; //5MHz clock
   /* Initialize the SPI_FirstBit member */
   SPI_InitStruct.SPI_FirstBit = SPI_FirstBit_MSB;
   /* Initialize the SPI_CRCPolynomial member */
