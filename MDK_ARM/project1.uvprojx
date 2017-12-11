@@ -589,11 +589,6 @@
               <FilePath>..\src\buzzerDriver.c</FilePath>
             </File>
             <File>
-              <FileName>trasnceiverDriver.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\trasnceiverDriver.c</FilePath>
-            </File>
-            <File>
               <FileName>pushButtonDriver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\pushButtonDriver.c</FilePath>
@@ -602,6 +597,11 @@
               <FileName>rtcDriver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\rtcDriver.c</FilePath>
+            </File>
+            <File>
+              <FileName>transceiverDriver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\transceiverDriver.c</FilePath>
             </File>
           </Files>
         </Group>
