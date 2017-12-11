@@ -2,6 +2,13 @@
 #include <FreeRTOS.h>
 #include <task.h>
 #include <queue.h>
+#include "transceiverDriver.h"
+#include "RFM69registers.h"
+#include "spiModule.h"
+#include "buzzerDriver.h"
+#include "pushButtonDriver.h"
+#include "gyroscopeDriver.h"
+
 
 /* Library includes. */
 #include <stm32f4xx.h>
@@ -22,22 +29,38 @@ void vLEDTask( void *pvParameters )
 
 int main()
 {
-	portBASE_TYPE task1_pass;
+//	portBASE_TYPE task1_pass;
+//	
+//	/* Create Task */
+//	task1_pass = xTaskCreate( vLEDTask, "Task_Led", configMINIMAL_STACK_SIZE, NULL, 1, NULL );
+//	
+//	if( task1_pass == pdPASS )
+//	{
+//			/* Start the Scheduler */ 
+//			vTaskStartScheduler(); 
+//	}
+//	else
+//	{
+//			/* ERROR! Creating the Tasks */
+//			return -2;
+//	}
+	int i=0;
+	short int data[10]={0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21};
+
+	transceiverInit();
+	transmitData(&data);
 	
-	/* Create Task */
-	task1_pass = xTaskCreate( vLEDTask, "Task_Led", configMINIMAL_STACK_SIZE, NULL, 1, NULL );
+	//while(i!=0x24)
+//	i=readReg(0x0C);
+	/*
+	while(i!=( RF_DATAMODUL_DATAMODE_PACKET | RF_DATAMODUL_MODULATIONTYPE_FSK | RF_DATAMODUL_MODULATIONSHAPING_00))
+	i=readReg(REG_OPMODE);*/
+/*	buzzerInit();
+	buzzerStart();*/
+//	pushButtonInit();
 	
-	if( task1_pass == pdPASS )
-	{
-			/* Start the Scheduler */ 
-			vTaskStartScheduler(); 
-	}
-	else
-	{
-			/* ERROR! Creating the Tasks */
-			return -2;
-	}
-	
+
+	while(1);
 	return 0;
 }
 

@@ -30,6 +30,7 @@
 #define RTE_DEVICE_STDPERIPH_TIM
 #define RTE_RTOS_FreeRTOS_CONFIG        /* RTOS FreeRTOS Config for FreeRTOS API */
 #define RTE_RTOS_FreeRTOS_CORE          /* RTOS FreeRTOS Core */
+#define RTE_RTOS_FreeRTOS_EVENTGROUPS   /* RTOS FreeRTOS Event Groups */
 #define RTE_RTOS_FreeRTOS_HEAP_2        /* RTOS FreeRTOS Heap 2 */
 #define RTE_RTOS_FreeRTOS_TIMERS        /* RTOS FreeRTOS Timers */
 

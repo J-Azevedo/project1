@@ -45,9 +45,9 @@ static void gpioInit(void)
 	//interrupt pin configuration
 
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
-	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStruct.GPIO_OType = GPIO_OType_OD;
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;
-	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStruct);
     
@@ -74,6 +74,8 @@ static void gpioInit(void)
 	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0x00;
 	/* Enable interrupt */
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+			EXTI_ClearITPendingBit(EXTI_Line0);
+			EXTI_ClearFlag(EXTI_Line0);
 	/* Add to NVIC */
 	NVIC_Init(&NVIC_InitStruct);
 	
@@ -100,6 +102,7 @@ void pushButtonInit(void)
 /* Handle PA0 interrupt */
 void EXTI0_IRQHandler(void) {
 	/* Make sure that interrupt flag is set */
+
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
 		/* Do your stuff when PD0 is changed */
 		
@@ -111,6 +114,7 @@ void EXTI0_IRQHandler(void) {
 		
 		/* Clear interrupt flag */
 		EXTI_ClearITPendingBit(EXTI_Line0);
+					EXTI_ClearFlag(EXTI_Line0);
 					/*
 			before we exit the interrupt we have to stop the timer so it doesn't occur a overflow that migth create an error in our program
 					TIM_Cmd(TIM3, DISABLE);
