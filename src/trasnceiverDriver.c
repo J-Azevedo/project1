@@ -1,9 +1,13 @@
 /* Includes ------------------------------------------------------------------*/
+#include "FreeRTOS.h"                   // ARM.FreeRTOS::RTOS:Core
+#include "event_groups.h"               // ARM.FreeRTOS::RTOS:Event Groups
+
 #include "transceiverDriver.h"
 #include "stm32f4xx_gpio.h"             // Keil::Device:StdPeriph Drivers:GPIO
 #include "RFM69registers.h"
 #include "stm32f4xx_exti.h"             // Keil::Device:StdPeriph Drivers:EXTI
 #include "string.h"
+#include "spiModule.h"
 //#include "startup_stm32f40_41xxx.s"
 
 /******************************************************************************
@@ -19,11 +23,13 @@
 //chyper key -> ea db da 47 a6 5a 59 6c d8 3d f1 08 fe 51 38 d8 
 #define RF_LISTEN2_COEF_IDLE 	1//Duration of the Idle phase in Listen mode. tListenIdle = ListenCoefIdle* ListenResolIdle
 #define RF_LISTEN3_COEF_RX 		0x26//Duration of the Rx phase in Listen mode (startup timeincluded)tListenRx = ListenCoefRx* ListenResolRx
+#define PACKET_SENT 1<<0
+#define ACK_PENDING 1<<1
 //gPIO PD11 interrupt pin for transceiver
 /******************************************************************************
 *								Private Variables
 *******************************************************************************/
-
+	  static EventGroupHandle_t xAckStatusFlags;
    static volatile uint8_t _mode=0; //current mode
 	 static const int serverNode=3;
 	 static int ackReceived=0;
@@ -34,35 +40,30 @@
 
 static void gpioInit(void);
 static void writeReg(uint8_t addr, uint8_t value);
-static uint8_t  readReg(uint8_t addr);
+ //uint8_t  readReg(uint8_t addr);
 static void sendFrame(const void *buffer);
 static void timInit(void);
+	short int spiTransmit(short int data);
 
 
+	
 /*****************************************************************************
 *			Private Functions
-******************************************************************************/
-
-static void gpioInit(void)
+*******************************************************************************/
+	
+static void sgpioInit(void)
 {//PD11
 	
 	GPIO_InitTypeDef GPIO_InitStruct;
 	EXTI_InitTypeDef EXTI_InitStruct;
   NVIC_InitTypeDef NVIC_InitStruct;
-    
-	/*enable NSS GPIO clocks*/
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE); 
+
   /* Enable clock for GPIOD */
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
   /* Enable clock for SYSCFG */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
 
-	
-	//SPI NSS pin configuration 
-  GPIO_InitStruct.GPIO_Pin =  GPIO_Pin_15; 
-  GPIO_Init(GPIOA, &GPIO_InitStruct);
-  GPIO_PinAFConfig(GPIOA, GPIO_PinSource15, GPIO_AF_SPI1);
-	
+
 	//interrupt pin configuration
 	 /* Set pin as input */
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
@@ -73,18 +74,20 @@ static void gpioInit(void)
 	GPIO_Init(GPIOD, &GPIO_InitStruct);
     
 	/* Tell system that you will use PD11 for EXTI_Line0 */
-	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource0);
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource10);
     
 	/* PD11 is connected to EXTI_Line0 */
-	EXTI_InitStruct.EXTI_Line = EXTI_Line11;
+	EXTI_InitStruct.EXTI_Line = EXTI_Line10;
 	/* Enable interrupt */
 	EXTI_InitStruct.EXTI_LineCmd = ENABLE;
 	/* Interrupt mode */
 	EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt;
 	/* Triggers on rising and falling edge */
-	EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
+	//EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
+	EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Rising;
 	/* Add to EXTI */
 	EXTI_Init(&EXTI_InitStruct);
+			EXTI_ClearITPendingBit(EXTI_Line10);
  
 	/* Add IRQ vector to NVIC */
 	/* PD11 is connected to EXTI_Line11, which has EXTI0_IRQn vector */
@@ -98,87 +101,131 @@ static void gpioInit(void)
 	/* Add to NVIC */
 	NVIC_Init(&NVIC_InitStruct);
 	
-
+	
 	
 
 
 }
-static void timInit(void)
-{
-  NVIC_InitTypeDef NVIC_InitStruct;
-	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-	
-	uint16_t PrescalerValue = 0; //get this right to the specific clock value
-	uint16_t period=665;
-	 /* Compute the prescaler value */
-  PrescalerValue = (uint16_t) ((SystemCoreClock /2) / 28000000) - 1;//need to be reviewed later to get real values for our project
+//static void timInit(void)
+//{
+//  NVIC_InitTypeDef NVIC_InitStruct;
+//	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+//	
+//	//uint16_t PrescalerValue =  0xFA00; //get this right to the specific clock value
+////	uint16_t period=665;
+//	uint16_t PrescalerValue =  (42000-1); //get this right to the specific clock value
+//	//uint16_t period=2000-1; ->2s
+//	uint16_t period=20000-1;//->10s
+//	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+//	 /* Compute the prescaler value */
+//	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
+//	int i=SystemCoreClock;
+//  //PrescalerValue = (uint16_t) ((SystemCoreClock /2) / 28000000) - 1;//need to be reviewed later to get real values for our project
+//  /* Time base configuration */
+//  TIM_TimeBaseStructure.TIM_Period = period;
+//  TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
+//  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+//  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 
-  /* Time base configuration */
-  TIM_TimeBaseStructure.TIM_Period = period;
-  TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
-  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+//		TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+//	
 
-  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-	
+//	/*timer interrupt configuration*/
+//	TIM_ITConfig(TIM3, TIM_IT_Update,ENABLE);
+//	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+//	
+//	NVIC_InitStruct.NVIC_IRQChannel = TIM3_IRQn;
+//	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+//	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 1;
+//	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+//	NVIC_Init(&NVIC_InitStruct);
+//}
 
-	/*timer interrupt configuration*/
-	TIM_ITConfig(TIM3, TIM_IT_Update,ENABLE);
-	
-	
-	NVIC_InitStruct.NVIC_IRQChannel = TIM3_IRQn;
-	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 1;
-	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStruct);
+//static void timInit(void)
+//{
+//  NVIC_InitTypeDef NVIC_InitStruct;
+//	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+//	
+//	//uint16_t PrescalerValue =  0xFA00; //get this right to the specific clock value
+////	uint16_t period=665;
+//	uint16_t PrescalerValue =  (42000-1); //get this right to the specific clock value
+//	//uint16_t period=2000-1; ->2s
+//	uint16_t period=20000-1;//->10s
+//	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+//	 /* Compute the prescaler value */
+//	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
+//	int i=SystemCoreClock;
+//  //PrescalerValue = (uint16_t) ((SystemCoreClock /2) / 28000000) - 1;//need to be reviewed later to get real values for our project
+//  /* Time base configuration */
+//  TIM_TimeBaseStructure.TIM_Period = period;
+//  TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
+//  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+//  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 
+//		TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+//	
 
-
-}
+//	/*timer interrupt configuration*/
+//	TIM_ITConfig(TIM3, TIM_IT_Update,ENABLE);
+//	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+//	
+//	NVIC_InitStruct.NVIC_IRQChannel = TIM3_IRQn;
+//	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+//	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 1;
+//	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+//	NVIC_Init(&NVIC_InitStruct);
+//}
 
 static void writeReg(uint8_t addr, uint8_t value)
 {
 	//chip select 
-	GPIO_SetBits(GPIOA, GPIO_Pin_15); //put NSS pin to HIGH
 
-	SPI_I2S_SendData(SPI1, addr|0x80); //send register to write data on
-	SPI_I2S_SendData(SPI1, value); //send register to write data on
-	GPIO_ResetBits(GPIOA, GPIO_Pin_15); //put NSS pin to LOW
+	GPIO_ResetBits(GPIOA, GPIO_Pin_8); //put NSS pin to LOW
+	int spivalue=((addr|0x80)<<8)|value;
+	spiTransmit(spivalue ); //send register to write data on
+
+		GPIO_SetBits(GPIOA, GPIO_Pin_8); //put NSS pin to HIGH
 }
 
-static uint8_t  readReg(uint8_t addr)
+ int  readReg(int addr)
 {
 
-	uint8_t value;
+ short	int value=01;
+	int addr2=(addr&0x7f)<<8;
 	//chip select 
-	GPIO_SetBits(GPIOA, GPIO_Pin_15); //put NSS pin to HIGH
-	value =(uint8_t)SPI_I2S_ReceiveData(SPI1);//read value that is stored in the register
-	GPIO_ResetBits(GPIOA, GPIO_Pin_15); //put NSS pin to LOW
-	return value;
+	GPIO_ResetBits(GPIOA, GPIO_Pin_8); //put NSS pin to LOW
+	value =	spiTransmit( addr2|0x00 );
 
+	
+	GPIO_SetBits(GPIOA, GPIO_Pin_8); //put NSS pin to HIGH
+	return value&0xff;
 }
 
 static void sendFrame(const void *buffer)
 {
-	int bufferSize=0;
+	short int bufferSize=0;
+	short int message[9]={0xAA,0xAA,0xAA,0xAA,0xAA,0xAA,0xAA,0xAA,0xAA};
 	changeMode(RF69_MODE_STANDBY); // turn off receiver to prevent reception while filling fifo
-  while ((readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // wait for ModeReady
+//  while ((readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // wait for ModeReady
   writeReg(REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_00); // DIO0 is "Packet Sent"
-	
-	GPIO_SetBits(GPIOA, GPIO_Pin_15); //put NSS pin to HIGH
-	SPI_I2S_SendData(SPI1, REG_FIFO | 0x80);//send data to start writing into the FIFO
+	int i=8;
+	while(i!= RF_DIOMAPPING1_DIO0_00 )
+	i=readReg(REG_DIOMAPPING1);
+	i=0;
+
+		//GPIO_ResetBits(GPIOA, GPIO_Pin_15); //put NSS pin to LOW
+
+	//SPI_I2S_SendData(SPI1, ((REG_FIFO | 0x80)<<8)|serverNode );//send data to start writing into the FIFO
+	writeReg(REG_FIFO ,serverNode);
 	//First send address 
-	SPI_I2S_SendData(SPI1, serverNode );//send the node of server
+	//SPI_I2S_SendData(SPI1, serverNode );//send the node of server
 	bufferSize=strlen(buffer);//find the length of the buffer we want to transmit
 	
-	for(int i=0; i<bufferSize;i++)
+	for(int i=0; i<7;i++)
 	{
-		SPI_I2S_SendData(SPI1, ((uint16_t*) buffer)[i]);//transmit the message through the spi
+		writeReg(REG_FIFO ,message[i]);//transmit the message through the spi
 	}
-		GPIO_ResetBits(GPIOA, GPIO_Pin_15); //put NSS pin to LOW
-
-
-
+	
 	changeMode(RF69_MODE_TX);//change the mode to transmit the value that we wrote in to the FIFO
 	
 }
@@ -186,6 +233,14 @@ static void sendFrame(const void *buffer)
 
 
 
+short int spiTransmit(short int data)
+{
+	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET); //indicates when the TX buffer is empty and ready for new data
+	SPI_I2S_SendData(SPI3, (short int)data);
+	
+	while(SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_RXNE)==RESET); 
+	return (short int)SPI_I2S_ReceiveData(SPI3);  
+}
 
 /*****************************************************************************
 *			Public Functions
@@ -197,10 +252,10 @@ void transceiverInit(void)
 	/*configurations for the transceiver*/
   const uint8_t CONFIG[][2] =
   {
-    /* 0x01 */ { REG_OPMODE, RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY },//turn on the sequencer, turn off listen, put the transceiver on standby
-    /* 0x02 */ { REG_DATAMODUL, RF_DATAMODUL_DATAMODE_PACKET | RF_DATAMODUL_MODULATIONTYPE_FSK | RF_DATAMODUL_MODULATIONSHAPING_00 }, // no shaping
-    /* 0x03 */ { REG_BITRATEMSB, RF_BITRATEMSB_250000   }, // speed of 250kbps->might be to fast testing needed
-    /* 0x04 */ { REG_BITRATELSB, RF_BITRATELSB_250000},
+  /* 0x01 */ { REG_OPMODE, RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY },//turn on the sequencer, turn off listen, put the transceiver on standby
+ /* 0x02 */ { REG_DATAMODUL, RF_DATAMODUL_DATAMODE_PACKET | RF_DATAMODUL_MODULATIONTYPE_FSK | RF_DATAMODUL_MODULATIONSHAPING_00 }, // no shaping
+    /* 0x03 */ { REG_BITRATEMSB, RF_BITRATEMSB_50000   }, // speed of 250kbps->might be to fast testing needed
+    /* 0x04 */ { REG_BITRATELSB, RF_BITRATELSB_50000},
     /* 0x05 */ { REG_FDEVMSB, RF_FDEVMSB_50000}, // default: 5KHz, (FDEV + BitRate / 2 <= 500KHz)
     /* 0x06 */ { REG_FDEVLSB, RF_FDEVLSB_50000},	
     /* 0x07 */ { REG_FRFMSB, (uint8_t) RF_FRFMSB_433    },//put frequency of 433 MH<
@@ -216,24 +271,26 @@ void transceiverInit(void)
    /* 0x11 */ { REG_PALEVEL, RF_PALEVEL_PA0_ON | RF_PALEVEL_PA1_OFF | RF_PALEVEL_PA2_OFF | RF_PALEVEL_OUTPUTPOWER_11111},
    /* 0x13 */ { REG_OCP, RF_OCP_ON | RF_OCP_TRIM_95 }, // over current protection (default is 95mA)
 
-		//may be wrong
+
     /* 0x19 */ { REG_RXBW, RF_RXBW_DCCFREQ_010 | RF_RXBW_MANT_16 | RF_RXBW_EXP_2 }, // (BitRate < 2 * RxBw) -> need to test this configuration
 
     /* 0x25 */ { REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_01 }, // DIO0 is the only IRQ we're using
     /* 0x26 */ { REG_DIOMAPPING2, RF_DIOMAPPING2_CLKOUT_OFF }, // DIO5 ClkOut disable for power saving
     /* 0x28 */ { REG_IRQFLAGS2, RF_IRQFLAGS2_FIFOOVERRUN }, // writing to this bit ensures that the FIFO & status flags are reset
     /* 0x29 */ { REG_RSSITHRESH, 220 }, // must be set to dBm = (-Sensitivity / 2), default is 0xE4 = 228 so -114dBm
-  //  /* 0x2D */ { REG_PREAMBLELSB, RF_PREAMBLESIZE_LSB_VALUE }, // default 3 preamble bytes 0xAAAAAA
+    /* 0x2D */ { REG_PREAMBLELSB, RF_PREAMBLESIZE_LSB_VALUE }, // default 3 preamble bytes 0xAAAAAA
     /* 0x2E */ { REG_SYNCCONFIG, RF_SYNC_ON | RF_SYNC_FIFOFILL_AUTO | RF_SYNC_SIZE_2 | RF_SYNC_TOL_0 },
+
     /* 0x2F */ { REG_SYNCVALUE1, 0x2D },      // sync value
     /* 0x30 */ { REG_SYNCVALUE2, networkID }, // NETWORK ID
-    /* 0x37 */ { REG_PACKETCONFIG1, RF_PACKET1_FORMAT_FIXED | RF_PACKET1_DCFREE_OFF | RF_PACKET1_CRC_ON | RF_PACKET1_CRCAUTOCLEAR_ON | RF_PACKET1_ADRSFILTERING_NODE },
+   /* 0x37 */ { REG_PACKETCONFIG1, RF_PACKET1_FORMAT_FIXED | RF_PACKET1_DCFREE_OFF | RF_PACKET1_CRC_ON | RF_PACKET1_CRCAUTOCLEAR_ON | RF_PACKET1_ADRSFILTERING_NODE },
     /* 0x38 */ { REG_PAYLOADLENGTH, 0x07 }, // packet length of 10 bytes -> also needs testing
 		/* 0x39 */ { REG_NODEADRS, nodeID }, // turned off because we're not using address filtering
     /* 0x3C */ { REG_FIFOTHRESH, RF_FIFOTHRESH_TXSTART_FIFONOTEMPTY | RF_FIFOTHRESH_VALUE }, // TX on FIFO not empty ->also need test
-		//need to test deçay
-    /* 0x3D */ { REG_PACKETCONFIG2, RF_PACKET2_RXRESTARTDELAY_64BITS   | RF_PACKET2_AUTORXRESTART_ON | RF_PACKET2_AES_ON }, // RXRESTARTDELAY must match transmitter PA ramp-down time (bitrate dependent), AES encryption enabled
-		/*0x3E  */ {RegAesKey1,CHYPHER_KEY_1},//16 byte chypher key
+		//need to test de?ay
+   /* 0x3D */ { REG_PACKETCONFIG2, RF_PACKET2_RXRESTARTDELAY_64BITS   | RF_PACKET2_AUTORXRESTART_ON | RF_PACKET2_AES_ON }, // RXRESTARTDELAY must match transmitter PA ramp-down time (bitrate dependent), AES encryption enabled
+	// /* 0x3D */ { REG_PACKETCONFIG2, RF_PACKET2_RXRESTARTDELAY_64BITS   | RF_PACKET2_AUTORXRESTART_ON | RF_PACKET2_AES_OFF },
+	/*0x3E  */ {RegAesKey1,CHYPHER_KEY_1},//16 byte chypher key
 		/*0x3f  */ {RegAesKey2,CHYPHER_KEY_2},
 		/*0x40  */ {RegAesKey3,CHYPHER_KEY_3},
 		/*0x41  */ {RegAesKey4,CHYPHER_KEY_4},
@@ -253,17 +310,31 @@ void transceiverInit(void)
     {255, 0}
  };
 
+ //spiInit();
 	/*we initialize the pins we need*/
-	gpioInit();
+ 
+	int i=0;
+	tSpiInit();
 	/*initialize the timer*/
 	//timInit();
- 
- /*write our configurations in the transceiver*/
-  for (uint8_t i = 0; CONFIG[i][0] != 255; i++)
-    writeReg(CONFIG[i][0], CONFIG[i][1]);
- 
-	changeMode(RF69_MODE_SLEEP);//put the transceiver in sleep
+ int value=(RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY);
 
+ while(i!= 0x24 )
+	i=readReg(REG_VERSION);
+	//	  	while(i!=0xb)
+//	i=readReg(0x04);
+		//			while(i!=0x1a)
+//	i=readReg(0x3);
+ //  do writeReg(REG_SYNCVALUE1, 0xAA); while (readReg(REG_SYNCVALUE1)!=0xAA );
+//  do writeReg(REG_SYNCVALUE1, 0x55); while (readReg(REG_SYNCVALUE1)!=0x55 );
+
+ /*write our configurations in the transceiver*/
+ for (uint8_t i = 0; CONFIG[i][0] != 255; i++)
+   			 writeReg(CONFIG[i][0], CONFIG[i][1]);
+
+ 
+changeMode(RF69_MODE_STANDBY);//put the transceiver in sleep
+		sgpioInit();
 
 }
 
@@ -304,14 +375,15 @@ void changeMode(int newMode)
 				
 			break;
 	}
-		
+	while ((readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // wait for ModeReady
 	//qualquer coisa para limpar semaphore se ouver algum taken
 }
 
 
 /* Handle PD11 interrupt */
 void EXTI15_10_IRQHandler(void)
-	{
+{
+		short int message[10]={0};
 	/* Make sure that interrupt flag is set */
 	if (EXTI_GetITStatus(EXTI_Line11) != RESET) {
 		/* Do your stuff when PD0 is changed */
@@ -320,36 +392,58 @@ void EXTI15_10_IRQHandler(void)
 		and if we are waiting for an ACK and the overflow time finishes we can also take it in the timer ISR*/  	
 		
 		/*we indicate that the ack was received*/
-			ackReceived=RECEIVED;
+		if(xEventGroupGetBitsFromISR(xAckStatusFlags)==1<<0)
+		{
+			xEventGroupClearBitsFromISR(xAckStatusFlags,PACKET_SENT);
+			
+		}
+		else
+		{
+			
+
 		
-		/* Clear interrupt flag */
-		EXTI_ClearITPendingBit(EXTI_Line11);
+			for(int i=0; i<0x2f; i++)
+			{
+				message[i]=readReg(REG_FIFO);
+			
+			}
+			xEventGroupClearBitsFromISR(xAckStatusFlags,ACK_PENDING);
+		
+
 					/*
 			before we exit the interrupt we have to stop the timer so it doesn't occur a overflow that migth create an error in our program
 					TIM_Cmd(TIM3, DISABLE);
 			*/
+		}
+				/* Clear interrupt flag */
+		EXTI_ClearITPendingBit(EXTI_Line11);
 	}
 }
 
 
-void TIM3_IRQHandler()
-{
-    if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
-    {
-        TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
-        GPIO_ToggleBits(GPIOD, GPIO_Pin_12);//for now this pin is beign toggled for testing
-				ackReceived=NOTRECEIVED;
-			/*
-			if this happens we take the semaphore and change some variable to signal that we have to re-transmit the message
-			
-			*/
-			/*
-			before we exit the interrupt we have to stop the timer
-					TIM_Cmd(TIM3, DISABLE);
-			*/
-		
-		}
-}
+//void TIM3_IRQHandler()
+//{
+
+//    if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
+//    {
+//        TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+//				ackReceived=NOTRECEIVED;
+//			
+
+//			/*
+//			before we exit the interrupt we have to stop the timer
+//					
+//			*/
+//	//		TIM_Cmd(TIM3, DISABLE);
+//			
+//			/*
+//			if this happens we take the semaphore and change some variable to signal that we have to re-transmit the message
+//			
+//			*/
+
+//		
+//		}
+//}
 
 
 void transmitData(const void *transferBuffer)
@@ -357,40 +451,61 @@ void transmitData(const void *transferBuffer)
 	/*first and most important we stop the scheduler because the transmission of data is the most critical part 
 	of our system and we can't have problems in this part	*/ //->review if this should be a critical section or not
 	//to be implemented later
-while(ackReceived!=RECEIVED)
-{
+//while(ackReceived!=RECEIVED)
+	EventBits_t uxBits;
+const TickType_t xTicksToWait = 5000 / portTICK_PERIOD_MS;
+	
+	while((uxBits&ACK_PENDING)!=ACK_PENDING)
+	{
+		
+
+
 	/*send the frame through the transeiver using the sendFrame() function*/
 	sendFrame(transferBuffer);
+	
 	/*now we wait for the semaphore to be taken to continue the execution of the function
-	when the semaphore is taken in this case it signals that the transmission ended
+	when the semaphore is taken in this case it signals that the transmission ended sucessefuly
+	
 		while((xSemaphoreGive()!=pdTRUE));
 	*/
-	//to be implemented later
-	/*clear the ack received flag to guarantue that there isn't an false positive ack*/
-	while(ackReceived!=RECEIVED);
-	//ackReceived=NOTRECEIVED;
-	/* after the message was correctly transmited we change our transceiver to listen mode 
-	so it is listening and waiting to receive an ACK
-	changeMode(Listen);
-	and after that we start the timer fot the time we will wait until we retransmit the message
-	  TIM_Cmd(TIMX, ENABLE);
-		*/
-	changeMode(RF69_MODE_LISTEN);
-	TIM_Cmd(TIM3, ENABLE);
-	
-		/*now we wait for the semaphore to be taken to continue the execution of the function
-	when the semaphore is taken in this case it signals we received and ACK or that the time we wait for the ACK ended and we have to 
-	resend the package
-		while((xSemaphoreGive()!=pdTRUE));
-	*/
-	
-}
+	//for now do this way for testing later use eventgroupgetbits			
+			int i=0;
+	while(i!=0x8)
+		i=(readReg(REG_IRQFLAGS2)&0x08);
+//	xEventGroupGetBits->use this later
+//	  writeReg(REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_01); // DIO0 is "Packet Sent"
 	/*
+		changeMode(RF69_MODE_RX);
+	
+	BaseType_t xHigherPriorityTaskWoken=pdFALSE;
+	  /* Wait a maximum of 100ms for either bit 0 or bit 4 to be set within
+  the event group.  Clear the bits before exiting. */
+//  uxBits = xEventGroupWaitBits(
+//            xAckStatusFlags,   /* The event group being tested. */
+//            ACK_PENDING, /* The bits within the event group to wait for. */
+//            pdTRUE,        /* BIT_0 & BIT_4 should be cleared before returning. */
+//            pdFALSE,       /* Don't wait for both bits, either bit will do. */
+//            xTicksToWait );/* Wait a maximum of 100ms for either bit to be set. */
+
+
+	
+	/*
+	wait for ack flag to be received do this for 2 seconds->maybe less
+	  uxBits = xEventGroupWaitBits
+	*/
+/*
+	after this happened it will go to the beggining of the while and it will test the flag of the event group
+	correspondent to the ack received flag, if the flag is on the transmission ocorred successfully and we can continue the program execution
+	if the bit was not set we resend the message again
+*/
+
+
+
+	}
+		/*->critical secticon is to be talked and discussed with Apu
 		if the message was received we end the function and leave the critical section->->review if this should be a critical section or not
 		if we did not receive the ACK we retransmit the message
 	*/
 	/*here we leave the critical section*/
 	//to be implemented later
-
-
 }

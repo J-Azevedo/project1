@@ -14,6 +14,7 @@
 #include "stm32f4xx.h"
 
 void spiInit(void);
+void tSpiInit(void);
 
 #endif /*__SPIMODULE_H__*/
 

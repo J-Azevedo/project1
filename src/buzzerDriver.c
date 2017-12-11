@@ -1,7 +1,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_gpio.h"             // Keil::Device:StdPeriph Drivers:GPIO
-
-
+#include "buzzerDriver.h"
 
 /******************************************************************************
 *								Public Variables
@@ -35,18 +34,42 @@ static void timInit(void)
 	
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 TIM_OCInitTypeDef  TIM_OCInitStructure;
-	uint16_t PrescalerValue = 0; //get this right to the specific clock value
-	uint16_t period=665; 
-	 /* Compute the prescaler value */
-  PrescalerValue = (uint16_t) ((SystemCoreClock /2) / 28000000) - 1;//need to be reviewed later to get real values for our project
+//	uint16_t PrescalerValue = 0; //get this right to the specific clock value
+//	uint16_t period=665; 
+//	 /* Compute the prescaler value */
+//  PrescalerValue = (uint16_t) ((SystemCoreClock /2) / 28000000) - 1;//need to be reviewed later to get real values for our project
 
+//  /* Time base configuration */
+//  TIM_TimeBaseStructure.TIM_Period = period;
+//  TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
+//  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+//  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+
+//  TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
+//	
+//	  /* PWM1 Mode configuration: Channe3 */
+//  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+//  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+//  TIM_OCInitStructure.TIM_Pulse = period/2;//duty cycle of 50%
+//  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+
+//  TIM_OC1Init(TIM4, &TIM_OCInitStructure);
+
+//  TIM_OC1PreloadConfig(TIM4, TIM_OCPreload_Enable);
+	uint16_t PrescalerValue =  (42000-1); //get this right to the specific clock value
+	uint16_t period=2000-1; 
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+	 /* Compute the prescaler value */
+	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
+	int i=SystemCoreClock;
+  //PrescalerValue = (uint16_t) ((SystemCoreClock /2) / 28000000) - 1;//need to be reviewed later to get real values for our project
   /* Time base configuration */
   TIM_TimeBaseStructure.TIM_Period = period;
   TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
-  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-
-  TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
+	
+	  TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
 	
 	  /* PWM1 Mode configuration: Channe3 */
   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
@@ -54,11 +77,9 @@ TIM_OCInitTypeDef  TIM_OCInitStructure;
   TIM_OCInitStructure.TIM_Pulse = period/2;//duty cycle of 50%
   TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
-  TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+  TIM_OC1Init(TIM4, &TIM_OCInitStructure);
 
   TIM_OC1PreloadConfig(TIM4, TIM_OCPreload_Enable);
-
-	
 	
 
 
