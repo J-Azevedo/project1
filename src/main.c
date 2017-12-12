@@ -8,7 +8,9 @@
 #include "buzzerDriver.h"
 #include "pushButtonDriver.h"
 #include "gyroscopeDriver.h"
-
+#ifndef ARM_MATH_CM4
+#define ARM_MATH_CM4
+#endif
 
 /* Library includes. */
 #include <stm32f4xx.h>
@@ -44,7 +46,6 @@ int main()
 //			/* ERROR! Creating the Tasks */
 //			return -2;
 //	}
-	int i=0;
 	short int data[10]={0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21};
 
 	transceiverInit();

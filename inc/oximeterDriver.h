@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file    oximeterDriver.h
-  * @author  Joao 
+  * @author  Joao reis
   * @date    15-November-2017
   * @brief   This file contains all the functions prototypes for the heart rate and 
 	oximeter sensor driver.

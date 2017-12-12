@@ -1,26 +1,36 @@
 #include "gyroscopeDriver.h"
 #include "spiModule.h"
-#include "i2cModule.h"
+#include <stdlib.h>
+
+
+/******************************************************************************
+*								Private Headers
+*******************************************************************************/
+
+static void gyroInit(void);
+static void gyroWrite(l3gd20Registers_t, uint8_t);
+//static uint8_t spiTransmit(uint8_t);
+
+/******************************************************************************
+*								Public Variables
+*******************************************************************************/
+l3gd20Data data_d;
+l3gd20Data data_dps;
 
 /******************************************************************************
 *								Private Variables
 *******************************************************************************/
-l3gd20Data data;
+static uint8_t tryCount=10;
 
-void gyroInit() 
+/******************************************************************************
+*								Private Functions
+*******************************************************************************/
+
+static void gyroInit() 
 {
 	GPIO_InitTypeDef GPIO_InitStruct;
 	
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE); //enable SCK, MOSI, MISO and NSS GPIO clocks
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE); 
-	
-	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF; // alternate function
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz; // clock speed
-	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP; // push/pull 
-	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL; // pullup/pulldown resistors inactive	
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5; //configuring SCK, MISO, MOSI and NSS
-	
-	GPIO_Init(GPIOB, &GPIO_InitStruct);
 	
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT; // alternate function
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz; // clock speed
@@ -29,56 +39,56 @@ void gyroInit()
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_1; //configuring  NSS
 	
 	GPIO_Init(GPIOC, &GPIO_InitStruct); //initialize all parameters assigned above
-	
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource3, GPIO_AF_SPI1); //SCK
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource4, GPIO_AF_SPI1); //MISO
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource5, GPIO_AF_SPI1); //MOSI
-  //GPIO_PinAFConfig(GPIOA, GPIO_PinSource4, GPIO_AF_SPI1); //NSS
-	
-	/*GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF; // alternate function
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz; // clock speed
-	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP; // push/pull 
-	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL; // pullup/pulldown resistors inactive	
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
-	
-	GPIO_Init(GPIOB, &GPIO_InitStruct); //initialize all parameters assigned above
-	
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_I2C1); //SCL
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_I2C1); //SDA*/
 }
 
-int gyroStart()
+static void gyroWrite(l3gd20Registers_t reg, uint8_t data)
+{
+	GPIO_ResetBits(GPIOC, GPIO_Pin_1); //put NSS pin to LOW
+	
+	spiTransmit(reg); //send register to write data on
+	spiTransmit(data); //write data on register reg
+	
+	GPIO_SetBits(GPIOC, GPIO_Pin_1); //put NSS pin to HIGH
+}
+
+/*static uint8_t spiTransmit(uint8_t data)
+{
+	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET); //indicates when the TX buffer is empty and ready for new data
+	SPI_I2S_SendData(SPI1, (uint8_t)data);
+	
+	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE)==RESET); 
+	return (uint8_t)SPI_I2S_ReceiveData(SPI1);  
+}*/
+
+/******************************************************************************
+*								Public Functions
+*******************************************************************************/
+
+void gyroStart(void)
 {
 	gyroInit();
 	spiInit();
 	GPIO_SetBits(GPIOC, GPIO_Pin_1); //put NSS pin to HIGH
 	
 	uint8_t id = gyroRead(L3GD20_REGISTER_WHO_AM_I, ONE_TIME);
-	if(id != L3GD20H_ID)
-		return 0;
+	while(id != L3GD20H_ID)
+	{
+		id = gyroRead(L3GD20_REGISTER_WHO_AM_I, ONE_TIME);
+		tryCount--;
+		if(!tryCount) //tries to access gyro 10 times, if it can't, terminates program
+			exit(EXIT_FAILURE);
+	}
 	
 	gyroWrite(L3GD20_REGISTER_CTRL_REG1, 0x0F); // Switch to normal mode and enable all three channels
 	gyroWrite(L3GD20_REGISTER_CTRL_REG4, 0x00); // choose resolution 250DPS
-	return 1;
 }	
-
-void gyroWrite(l3gd20Registers_t reg, uint8_t data)
-{
-	GPIO_ResetBits(GPIOC, GPIO_Pin_1); //put NSS pin to LOW
-	
-	gyroTransmit(reg); //send register to write data on
-	/*while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET); //wait until transfer is ready
-	SPI_I2S_SendData(SPI1, reg); //send register to write data on*/
-	
-	gyroTransmit(data); //write data on register reg
-	/*while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET); //wait until transfer is ready
-	SPI_I2S_SendData(SPI1, data); //write data on register reg*/
-	
-	GPIO_SetBits(GPIOC, GPIO_Pin_1); //put NSS pin to HIGH
-}
 
 uint8_t gyroRead(l3gd20Registers_t reg, readingType type)
 {
+	/*static float biasX=0;
+	static float biasY=0;
+	static float biasZ=0;
+	static uint8_t shot=1;*/
 	uint8_t readByte=0;
 	uint8_t xhi, xlo, ylo, yhi, zlo, zhi;
 	
@@ -86,8 +96,8 @@ uint8_t gyroRead(l3gd20Registers_t reg, readingType type)
 	{
 		GPIO_ResetBits(GPIOC, GPIO_Pin_1);
 		
-		gyroTransmit(reg | 0x80);	 //append read bit
-		readByte=gyroTransmit(DUMMY_BYTE);
+		spiTransmit(reg | 0x80);	 //append read bit
+		readByte=spiTransmit(DUMMY_BYTE);
 		
 		GPIO_SetBits(GPIOC, GPIO_Pin_1); //put NSS pin to HIGH
 	}
@@ -95,49 +105,42 @@ uint8_t gyroRead(l3gd20Registers_t reg, readingType type)
 	{
 		GPIO_ResetBits(GPIOC, GPIO_Pin_1); //put NSS pin to LOW
 		
-		gyroTransmit(L3GD20_REGISTER_OUT_X_L | 0x80 | 0x40);
+		spiTransmit(L3GD20_REGISTER_OUT_X_L | 0x80 | 0x40);
 		
-		xlo=gyroTransmit(DUMMY_BYTE); 
-		xhi=gyroTransmit(DUMMY_BYTE);
-		ylo=gyroTransmit(DUMMY_BYTE);
-		yhi=gyroTransmit(DUMMY_BYTE);
-		zlo=gyroTransmit(DUMMY_BYTE);
-		zhi=gyroTransmit(DUMMY_BYTE);
+		xlo=spiTransmit(DUMMY_BYTE); 
+		xhi=spiTransmit(DUMMY_BYTE);
+		ylo=spiTransmit(DUMMY_BYTE);
+		yhi=spiTransmit(DUMMY_BYTE);
+		zlo=spiTransmit(DUMMY_BYTE);
+		zhi=spiTransmit(DUMMY_BYTE);
 		
 		GPIO_SetBits(GPIOC, GPIO_Pin_1); //put NSS pin to HIGH
 		
 		//shift values to create properly formed integer (low byte first)
-		data.x = (int16_t)(xlo | (xhi << 8));
-		data.y = (int16_t)(ylo | (yhi << 8));
-		data.z = (int16_t)(zlo | (zhi << 8));
+		data_dps.x = (int16_t)(xlo | (xhi << 8));
+		data_dps.y = (int16_t)(ylo | (yhi << 8));
+		data_dps.z = (int16_t)(zlo | (zhi << 8));
 		
-		//converter dados para dps
-		data.x *= L3GD20_SENSITIVITY_250DPS; // 8.75 mdps/LSB
-    data.y *= L3GD20_SENSITIVITY_250DPS;
-    data.z *= L3GD20_SENSITIVITY_250DPS;
+		//convert raw data to degrees per second, according to chosen sensitivity (250dps)
+		data_dps.x *= L3GD20_SENSITIVITY_250DPS; // 8.75 mdps/digit, each number represents 8.75 mdps degrees
+    data_dps.y *= L3GD20_SENSITIVITY_250DPS;
+    data_dps.z *= L3GD20_SENSITIVITY_250DPS;
+		
+		
+		/*
+		if(shot)
+		{
+			shot--;
+			biasX=data_dps.x;
+			biasY=data_dps.y;
+			biasZ=data_dps.z;
+		}
+		
+		//calculate the angles from the gyro
+		data_d.x += data_dps.x * DT - biasX;
+		data_d.y += data_dps.y * DT - biasY;
+		data_d.z += data_dps.z * DT - biasZ;*/
 	}
 	
 	return readByte; //in case of MULTIPLE_TIMES, returning readByte means nothing
-}
-
-/*uint16_t gyroTransmit(uint8_t data)
-{
-	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET); //indicates when the TX buffer is empty and ready for new data
-	uint16_t d=(data<<8 | DUMMY_BYTE);
-	uint16_t value=0;
-	SPI_I2S_SendData(SPI1, (uint16_t)d);
-	//SPI_I2S_SendData(SPI1, (uint8_t)data);
-	
-	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE)==RESET); 
-	value=(uint16_t)SPI_I2S_ReceiveData(SPI1);
-	return value;  
-}*/
-
-uint8_t gyroTransmit(uint8_t data)
-{
-	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET); //indicates when the TX buffer is empty and ready for new data
-	SPI_I2S_SendData(SPI1, (uint8_t)data);
-	
-	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE)==RESET); 
-	return (uint8_t)SPI_I2S_ReceiveData(SPI1);  
 }
