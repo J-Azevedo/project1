@@ -8,51 +8,14 @@ void tGpioInit(void);
 
 void spiInit()
 {
-	gpioInit();
 	SPI_InitTypeDef SPI_InitStruct;
+	GPIO_InitTypeDef GPIO_InitStruct;
+	
 	SPI_StructInit(&SPI_InitStruct);
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE); //enable peripheral clock
-
-	/* Initialize the SPI_Direction member */
-  SPI_InitStruct.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
-  /* initialize the SPI_Mode member */
-  SPI_InitStruct.SPI_Mode = SPI_Mode_Master;
-  /* initialize the SPI_DataSize member */
-  //SPI_InitStruct.SPI_DataSize = SPI_DataSize_16b;
-	SPI_InitStruct.SPI_DataSize = SPI_DataSize_16b;
-  /* Initialize the SPI_CPOL member */
-  SPI_InitStruct.SPI_CPOL = SPI_CPOL_Low;
-  /* Initialize the SPI_CPHA member */
-  SPI_InitStruct.SPI_CPHA = SPI_CPHA_1Edge;
-  /* Initialize the SPI_NSS member */
-  SPI_InitStruct.SPI_NSS = SPI_NSS_Soft;
-  /* Initialize the SPI_BaudRatePrescaler member */
-  SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16  ; //5MHz clock
-  /* Initialize the SPI_FirstBit member */
-  SPI_InitStruct.SPI_FirstBit = SPI_FirstBit_MSB;
-  /* Initialize the SPI_CRCPolynomial member */
-  SPI_InitStruct.SPI_CRCPolynomial = 7;
-	
-	SPI_Init(SPI1, &SPI_InitStruct); //this function applies the configurations made above
-
-	/**
-  * @brief  Enables or disables the specified SPI peripheral.
-  * @param  SPIx: where x can be 1, 2, 3, 4, 5 or 6 to select the SPI peripheral.
-  * @param  NewState: new state of the SPIx peripheral. 
-  *          This parameter can be: ENABLE or DISABLE.
-  * @retval None
-  */
-	SPI_Cmd(SPI1, ENABLE);
-	
-}
-
-void gpioInit()
-{
-	
-	GPIO_InitTypeDef GPIO_InitStruct;
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE); //enable SCK, MOSI, MISO and NSS GPIO clocks
-	
+
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF; // alternate function
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz; // clock speed
 	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP; // push/pull 
@@ -61,16 +24,34 @@ void gpioInit()
 	
 	GPIO_Init(GPIOB, &GPIO_InitStruct);
 	
-	
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource3, GPIO_AF_SPI1); //SCK
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource4, GPIO_AF_SPI1); //MISO
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource5, GPIO_AF_SPI1); //MOSI
-    
-
-
-
-
+	
+	SPI_InitStruct.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+  SPI_InitStruct.SPI_Mode = SPI_Mode_Master;
+	SPI_InitStruct.SPI_DataSize = SPI_DataSize_8b;
+  SPI_InitStruct.SPI_CPOL = SPI_CPOL_Low;
+  SPI_InitStruct.SPI_CPHA = SPI_CPHA_1Edge;
+  SPI_InitStruct.SPI_NSS = SPI_NSS_Soft;
+  SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16; //5MHz clock
+  SPI_InitStruct.SPI_FirstBit = SPI_FirstBit_MSB;
+  SPI_InitStruct.SPI_CRCPolynomial = 7;
+	
+	SPI_Init(SPI1, &SPI_InitStruct); //this function applies the configurations made above
+	
+	SPI_Cmd(SPI1, ENABLE);
 }
+
+uint8_t spiTransmit(uint8_t data)
+{
+	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET); //indicates when the TX buffer is empty and ready for new data
+	SPI_I2S_SendData(SPI1, (uint8_t)data);
+	
+	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE)==RESET); 
+	return (uint8_t)SPI_I2S_ReceiveData(SPI1);  
+}
+
 
 void tSpiInit()
 {

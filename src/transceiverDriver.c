@@ -38,12 +38,11 @@
 *								Private Headers
 *******************************************************************************/
 
-static void gpioInit(void);
+
 static void writeReg(uint8_t addr, uint8_t value);
- //uint8_t  readReg(uint8_t addr);
 static void sendFrame(const void *buffer);
-static void timInit(void);
-	short int spiTransmit(short int data);
+//static void timInit(void);
+ short int tSpiTransmit(short int data);
 
 
 	
@@ -182,7 +181,7 @@ static void writeReg(uint8_t addr, uint8_t value)
 
 	GPIO_ResetBits(GPIOA, GPIO_Pin_8); //put NSS pin to LOW
 	int spivalue=((addr|0x80)<<8)|value;
-	spiTransmit(spivalue ); //send register to write data on
+	tSpiTransmit(spivalue ); //send register to write data on
 
 		GPIO_SetBits(GPIOA, GPIO_Pin_8); //put NSS pin to HIGH
 }
@@ -194,7 +193,7 @@ static void writeReg(uint8_t addr, uint8_t value)
 	int addr2=(addr&0x7f)<<8;
 	//chip select 
 	GPIO_ResetBits(GPIOA, GPIO_Pin_8); //put NSS pin to LOW
-	value =	spiTransmit( addr2|0x00 );
+	value =	tSpiTransmit( addr2|0x00 );
 
 	
 	GPIO_SetBits(GPIOA, GPIO_Pin_8); //put NSS pin to HIGH
@@ -203,7 +202,7 @@ static void writeReg(uint8_t addr, uint8_t value)
 
 static void sendFrame(const void *buffer)
 {
-	short int bufferSize=0;
+
 	short int message[9]={0xAA,0xAA,0xAA,0xAA,0xAA,0xAA,0xAA,0xAA,0xAA};
 	changeMode(RF69_MODE_STANDBY); // turn off receiver to prevent reception while filling fifo
 //  while ((readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // wait for ModeReady
@@ -213,14 +212,11 @@ static void sendFrame(const void *buffer)
 	i=readReg(REG_DIOMAPPING1);
 	i=0;
 
-		//GPIO_ResetBits(GPIOA, GPIO_Pin_15); //put NSS pin to LOW
 
-	//SPI_I2S_SendData(SPI1, ((REG_FIFO | 0x80)<<8)|serverNode );//send data to start writing into the FIFO
-	writeReg(REG_FIFO ,serverNode);
 	//First send address 
-	//SPI_I2S_SendData(SPI1, serverNode );//send the node of server
-	bufferSize=strlen(buffer);//find the length of the buffer we want to transmit
-	
+	writeReg(REG_FIFO ,serverNode);
+
+
 	for(int i=0; i<7;i++)
 	{
 		writeReg(REG_FIFO ,message[i]);//transmit the message through the spi
@@ -233,7 +229,7 @@ static void sendFrame(const void *buffer)
 
 
 
-short int spiTransmit(short int data)
+ short int tSpiTransmit(short int data)
 {
 	while (SPI_I2S_GetFlagStatus(SPI3, SPI_I2S_FLAG_TXE) == RESET); //indicates when the TX buffer is empty and ready for new data
 	SPI_I2S_SendData(SPI3, (short int)data);
@@ -284,7 +280,7 @@ void transceiverInit(void)
     /* 0x2F */ { REG_SYNCVALUE1, 0x2D },      // sync value
     /* 0x30 */ { REG_SYNCVALUE2, networkID }, // NETWORK ID
    /* 0x37 */ { REG_PACKETCONFIG1, RF_PACKET1_FORMAT_FIXED | RF_PACKET1_DCFREE_OFF | RF_PACKET1_CRC_ON | RF_PACKET1_CRCAUTOCLEAR_ON | RF_PACKET1_ADRSFILTERING_NODE },
-    /* 0x38 */ { REG_PAYLOADLENGTH, 0x07 }, // packet length of 10 bytes -> also needs testing
+    /* 0x38 */ { REG_PAYLOADLENGTH, 0x0A }, // packet length of 10 bytes -> also needs testing
 		/* 0x39 */ { REG_NODEADRS, nodeID }, // turned off because we're not using address filtering
     /* 0x3C */ { REG_FIFOTHRESH, RF_FIFOTHRESH_TXSTART_FIFONOTEMPTY | RF_FIFOTHRESH_VALUE }, // TX on FIFO not empty ->also need test
 		//need to test de?ay
@@ -310,23 +306,20 @@ void transceiverInit(void)
     {255, 0}
  };
 
- //spiInit();
-	/*we initialize the pins we need*/
+
+
  
 	int i=0;
+ //here we initialize the spi peripheral and the corrensponding GPIO pins
 	tSpiInit();
-	/*initialize the timer*/
-	//timInit();
- int value=(RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY);
+
+// int value=(RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY);
 
  while(i!= 0x24 )
 	i=readReg(REG_VERSION);
-	//	  	while(i!=0xb)
-//	i=readReg(0x04);
-		//			while(i!=0x1a)
-//	i=readReg(0x3);
- //  do writeReg(REG_SYNCVALUE1, 0xAA); while (readReg(REG_SYNCVALUE1)!=0xAA );
-//  do writeReg(REG_SYNCVALUE1, 0x55); while (readReg(REG_SYNCVALUE1)!=0x55 );
+/*do this operations to guarantee that the programing of the transceiver is working*/
+  do writeReg(REG_SYNCVALUE1, 0xAA); while (readReg(REG_SYNCVALUE1)!=0xAA );
+  do writeReg(REG_SYNCVALUE1, 0x55); while (readReg(REG_SYNCVALUE1)!=0x55 );
 
  /*write our configurations in the transceiver*/
  for (uint8_t i = 0; CONFIG[i][0] != 255; i++)
@@ -477,9 +470,10 @@ const TickType_t xTicksToWait = 5000 / portTICK_PERIOD_MS;
 	/*
 		changeMode(RF69_MODE_RX);
 	
-	BaseType_t xHigherPriorityTaskWoken=pdFALSE;
+	BaseType_t xHigherPriorityTaskWoken=pdFALSE;*/
 	  /* Wait a maximum of 100ms for either bit 0 or bit 4 to be set within
-  the event group.  Clear the bits before exiting. */
+  the event group.  Clear the bits before exiting.*/
+	
 //  uxBits = xEventGroupWaitBits(
 //            xAckStatusFlags,   /* The event group being tested. */
 //            ACK_PENDING, /* The bits within the event group to wait for. */

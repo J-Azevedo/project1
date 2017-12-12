@@ -14,6 +14,9 @@
 #include "stm32f4xx.h"
 
 void i2cInit(void);
+void i2cWrite(uint8_t, uint8_t, uint8_t);
+uint8_t i2cRead(uint8_t, uint8_t);
+
 
 #endif /*__I2CMODULE_H__*/
 

@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file    gyroscopeDriver.h
-  * @author  Joao 
+  * @author  Joao Reis
   * @date    15-November-2017
   * @brief   This file contains all the functions prototypes for the gyroscope 
 	(L3GD20) driver.
@@ -23,7 +23,12 @@
 #define L3GD20_SENSITIVITY_2000DPS (0.070F)        // Roughly 18/256
 #define L3GD20_DPS_TO_RADS         (0.017453293F)  // degress/s to rad/s multiplier
 
-#define DUMMY_BYTE 										0xFF
+#define DT														1						//period between each gyro read in seconds
+
+/*//gyro bias correction values
+#define BIAS_X												0.4f
+#define BIAS_Y												-3.0f
+#define BIAS_Z												0.02f*/
 
 typedef enum {ONE_TIME, MULTIPLE_TIMES} readingType;
   
@@ -64,15 +69,11 @@ typedef struct l3gd20Data_t
   float z;
 } l3gd20Data;
 
-extern l3gd20Data data;
+extern l3gd20Data data_dps;
+extern l3gd20Data data_d;
 		
-void gyroInit(void);
-int gyroStart(void);
-void gyroWrite(l3gd20Registers_t, uint8_t);
+void gyroStart(void);
 uint8_t gyroRead(l3gd20Registers_t, readingType);
-//uint16_t gyroTransmit(uint8_t);
-uint8_t gyroTransmit(uint8_t);
-
 
 #endif /*__GYROSCOPE_H__*/
 
