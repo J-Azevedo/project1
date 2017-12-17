@@ -20,36 +20,42 @@ void prvSetupLed(void);
 void vLEDTask( void *pvParameters )
 {
 	prvSetupLed();
+/* TickType_t xLastWakeTime;
+ const TickType_t xFrequency = 10;*/
+
+     // Initialise the xLastWakeTime variable with the current time.
+    // xLastWakeTime = xTaskGetTickCount();
 	for( ;; )
 	{
 		/* Toogle the LED bit */
-		GPIO_ToggleBits(GPIOD, GPIO_Pin_13);
+		GPIO_ToggleBits(GPIOD, GPIO_Pin_15);
 		vTaskDelay(1000 / portTICK_RATE_MS);	
+//		  vTaskDelayUntil( &xLastWakeTime, xFrequency );
 	}
 }
 
 
 int main()
 {
-//	portBASE_TYPE task1_pass;
-//	
-//	/* Create Task */
-//	task1_pass = xTaskCreate( vLEDTask, "Task_Led", configMINIMAL_STACK_SIZE, NULL, 1, NULL );
-//	
-//	if( task1_pass == pdPASS )
-//	{
-//			/* Start the Scheduler */ 
-//			vTaskStartScheduler(); 
-//	}
-//	else
-//	{
-//			/* ERROR! Creating the Tasks */
-//			return -2;
-//	}
-	short int data[10]={0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21};
+	portBASE_TYPE task1_pass;
+	
+	/* Create Task */
+	task1_pass = xTaskCreate( vLEDTask, "Task_Led", configMINIMAL_STACK_SIZE, NULL, 1, NULL );
+	
+	if( task1_pass == pdPASS )
+	{
+			/* Start the Scheduler */ 
+			vTaskStartScheduler(); 
+	}
+	else
+	{
+			/* ERROR! Creating the Tasks */
+			return -2;
+	}
+//	short int data[10]={0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21};
 
-	transceiverInit();
-	transmitData(&data);
+//	transceiverInit();
+//	transmitData(&data);
 	
 	//while(i!=0x24)
 //	i=readReg(0x0C);
@@ -73,8 +79,9 @@ void prvSetupLed(void)
 	// Enabling GPIO peripheral clock
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
 	// GPIO peripheral properties specification
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_13; // LED3 GPIO pin
-	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF; // alternate function
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_15; // LED3 GPIO pin
+//	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF; // alternate function
+	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz; // clock speed
 	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP; // push/pull 
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL; // pullup/pulldown resistors inactive
