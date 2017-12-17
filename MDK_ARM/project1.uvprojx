@@ -606,12 +606,12 @@
             <File>
               <FileName>WordsData.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\WordsData.c</FilePath>
+              <FilePath>..\src\WordsData.c</FilePath>
             </File>
             <File>
               <FileName>WordsRecognizer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\WordsRecognizer.c</FilePath>
+              <FilePath>..\src\WordsRecognizer.c</FilePath>
             </File>
           </Files>
         </Group>

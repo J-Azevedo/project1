@@ -241,7 +241,6 @@ the STM32 microcontroller CRC peripheral (configuration done in RCC register)*/
 
 	microphoneGPIOInit();
 	
-	//microphoneNVICInit();
 	
   i2sInit();
 	
@@ -249,13 +248,6 @@ the STM32 microcontroller CRC peripheral (configuration done in RCC register)*/
 
 	Delay(10000);
 
-
-//  /* Set the local parameters */
-//  AudioRecBitRes = BitRes;
-//  AudioRecChnlNbr = ChnlNbr;
-    
-//  /* Set state of the audio recorder to initialized */
-//  AudioRecInited = 1;
 }
 
 void microphoneStart()//uint16_t* pbuf, uint32_t size)
