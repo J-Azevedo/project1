@@ -2,12 +2,21 @@
 #include <FreeRTOS.h>
 #include <task.h>
 #include <queue.h>
+#include <semphr.h>
+/*stm libraries*/
+
+/*Project includes*/
+#include "main.h"
 #include "transceiverDriver.h"
 #include "RFM69registers.h"
 #include "spiModule.h"
 #include "buzzerDriver.h"
 #include "pushButtonDriver.h"
 #include "gyroscopeDriver.h"
+/*Task includes*/
+#include "gyroAcquisitionTask.h"
+#include "gyroProcessingTask.h"
+
 #ifndef ARM_MATH_CM4
 #define ARM_MATH_CM4
 #endif
@@ -16,6 +25,48 @@
 #include <stm32f4xx.h>
 
 void prvSetupLed(void);
+
+/*************************************
+*task handler declaration
+*************************************/
+xTaskHandle xTskGyroAcquisition;
+xTaskHandle xTskGyroProcessing;
+
+/*************************************
+*queue declaration
+*************************************/
+xQueueHandle xQGyroData;
+
+/*************************************
+*semaphore declaration
+*************************************/
+xSemaphoreHandle xSemGyroDataProcessing;
+
+/*************************************
+*queue initialization
+*************************************/
+
+int queueInitialization()
+{
+	xQGyroData=xQueueCreate( 20, sizeof( l3gd20Data ) );
+	if(xQGyroData==NULL)
+	{
+		return 1;
+	}
+
+}
+
+
+/*************************************
+*semaphore initialization
+*************************************/
+int semaphoreInitialization()
+{
+
+// xSemGyroDataProcessing=xSemaphoreCreateBinary
+
+}
+
 
 void vLEDTask( void *pvParameters )
 {
@@ -34,13 +85,38 @@ void vLEDTask( void *pvParameters )
 	}
 }
 
+void vGyroAcquisitionTask( void *pvParameters )
+{
+	//gyroStart();
+	for( ;; )
+	{
+		gyroAcquisitionTask();
+
+	}
+}
+
+void vGyroProcessingtTask( void *pvParameters)
+{
+	for( ;; )
+	{
+		gyroProcessingTask();
+
+	}
+
+}
+
+
+
 
 int main()
 {
 	portBASE_TYPE task1_pass;
-	
+		gyroStart();
+
+
 	/* Create Task */
-	task1_pass = xTaskCreate( vLEDTask, "Task_Led", configMINIMAL_STACK_SIZE, NULL, 1, NULL );
+	task1_pass = xTaskCreate( vGyroAcquisitionTask, "Gyro_Acquisition_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroAcquisition );
+	//	task1_pass = xTaskCreate( vGyroProcessingtTask, "Gyro_Processing_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroProcessing );
 	
 	if( task1_pass == pdPASS )
 	{
@@ -67,7 +143,6 @@ int main()
 //	pushButtonInit();
 	
 
-	while(1);
 	return 0;
 }
 

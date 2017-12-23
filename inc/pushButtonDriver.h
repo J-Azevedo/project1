@@ -11,8 +11,8 @@
  Define to prevent recursive inclusion -------------------------------------*/
 
 
-#ifndef __PUSHBUTTON_DRIVER
-#define __PUSHBUTTON_DRIVER
+#ifndef __PUSHBUTTONDRIVER_H__
+#define __PUSHBUTTONDRIVER_H__
 
 /*******************************************************************************
 * 														Public Defines          												  *

@@ -11,8 +11,8 @@
  Define to prevent recursive inclusion -------------------------------------*/
 
 
-#ifndef __TRANSCEIVER_DRIVER
-#define __TRANSCEIVER_DRIVER
+#ifndef __TRANSCEIVERDRIVER_H__
+#define __TRANSCEIVERDRIVER_H__
 
 /*******************************************************************************
 * 														Public Defines          												  *

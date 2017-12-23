@@ -31,6 +31,11 @@
 // **********************************************************************************
 // RFM69/SX1231 Internal registers addresses
 //**************************************************
+
+#ifndef __RFM69REGISTERS_H__
+#define __RFM69REGISTERS_H__
+
+
 #define REG_FIFO          0x00
 #define REG_OPMODE        0x01
 #define REG_DATAMODUL     0x02
@@ -1126,3 +1131,4 @@
 #define RegAesKey15 0x4c
 #define RegAesKey16 0x4d
 
+#endif

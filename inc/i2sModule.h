@@ -7,8 +7,8 @@
   ****************************************************************************** 
  Define to prevent recursive inclusion -------------------------------------*/
 
-#ifndef __I2S_MODULE
-#define __I2S_MODULE
+#ifndef __I2SMODULE_H__
+#define __I2SMODULE_H__
 
 #define DECIMATION_FACTOR           64
 #define SAMPLE_FREQUENCY            16000 //16 khz pcm output

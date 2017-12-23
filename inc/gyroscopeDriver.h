@@ -73,7 +73,8 @@ extern l3gd20Data data_dps;
 extern l3gd20Data data_d;
 		
 void gyroStart(void);
-uint8_t gyroRead(l3gd20Registers_t, readingType);
+uint8_t gyroReadOneByte(l3gd20Registers_t, readingType);
+l3gd20Data gyroReadAxisValue(void);
 
 #endif /*__GYROSCOPE_H__*/
 

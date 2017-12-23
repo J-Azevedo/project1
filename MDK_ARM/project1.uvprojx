@@ -534,11 +534,6 @@
               <FilePath>..\src\oximeterDriver.c</FilePath>
             </File>
             <File>
-              <FileName>pushButtonDriver.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\pushButtonDriver.c</FilePath>
-            </File>
-            <File>
               <FileName>rtcDriver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\rtcDriver.c</FilePath>
@@ -599,6 +594,11 @@
               </FileOption>
             </File>
             <File>
+              <FileName>gyroProcessingTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\gyroProcessingTask.c</FilePath>
+            </File>
+            <File>
               <FileName>transceiverDriver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\transceiverDriver.c</FilePath>
@@ -612,6 +612,16 @@
               <FileName>WordsRecognizer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\WordsRecognizer.c</FilePath>
+            </File>
+            <File>
+              <FileName>gyroAcquisitionTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\gyroAcquisitionTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>pushButtonDriver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\pushButtonDriver.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -683,6 +693,16 @@
               <FileType>5</FileType>
               <FilePath>..\inc\WordsData.h</FilePath>
             </File>
+            <File>
+              <FileName>gyroAcquisitionTask.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\gyroAcquisitionTask.h</FilePath>
+            </File>
+            <File>
+              <FileName>gyroProcessingTask.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\gyroProcessingTask.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -697,6 +717,16 @@
               <FileName>..\..\emb\projeto_1\Libraries\libPDMFilter_Keil.lib</FileName>
               <FileType>4</FileType>
               <FilePath>$TC_ROOT$\..\..\emb\projeto_1\Libraries\libPDMFilter_Keil.lib</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4_discovery.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\stm32f4_discovery.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4_discovery.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Libraries\stm32f4_discovery.h</FilePath>
             </File>
           </Files>
         </Group>
