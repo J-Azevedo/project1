@@ -48,7 +48,8 @@ xSemaphoreHandle xSemGyroDataProcessing;
 
 int queueInitialization()
 {
-	xQGyroData=xQueueCreate( 20, sizeof( l3gd20Data ) );
+	//xQGyroData=xQueueCreate( 20, sizeof( l3gd20Data ) );
+	xQGyroData=xQueueCreate( 20, sizeof( float ) );
 	if(xQGyroData==NULL)
 	{
 		return 1;
@@ -111,12 +112,14 @@ void vGyroProcessingtTask( void *pvParameters)
 int main()
 {
 	portBASE_TYPE task1_pass;
+		portBASE_TYPE task2_pass;
+
 		gyroStart();
 
-
+ queueInitialization();
 	/* Create Task */
 	task1_pass = xTaskCreate( vGyroAcquisitionTask, "Gyro_Acquisition_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroAcquisition );
-	//	task1_pass = xTaskCreate( vGyroProcessingtTask, "Gyro_Processing_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroProcessing );
+	task2_pass = xTaskCreate( vGyroProcessingtTask, "Gyro_Processing_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroProcessing );
 	
 	if( task1_pass == pdPASS )
 	{
