@@ -6,7 +6,6 @@
 /*stm libraries*/
 
 /*Project includes*/
-#include "main.h"
 #include "transceiverDriver.h"
 #include "RFM69registers.h"
 #include "spiModule.h"
@@ -16,13 +15,15 @@
 /*Task includes*/
 #include "gyroAcquisitionTask.h"
 #include "gyroProcessingTask.h"
+#include "rfTransmissionTask.h"
+/* Library includes. */
+#include <stm32f4xx.h>
 
 #ifndef ARM_MATH_CM4
 #define ARM_MATH_CM4
 #endif
 
-/* Library includes. */
-#include <stm32f4xx.h>
+
 
 void prvSetupLed(void);
 
@@ -31,6 +32,7 @@ void prvSetupLed(void);
 *************************************/
 xTaskHandle xTskGyroAcquisition;
 xTaskHandle xTskGyroProcessing;
+xTaskHandle xTskRfTransmission;
 
 /*************************************
 *queue declaration
@@ -41,7 +43,7 @@ xQueueHandle xTransmissionData;
 /*************************************
 *semaphore declaration
 *************************************/
-xSemaphoreHandle xSemGyroDataProcessing;
+//xSemaphoreHandle xSemGyroDataProcessing;
 xSemaphoreHandle xSemMicrophoneStart;
 
 /*************************************
@@ -56,6 +58,12 @@ int queueInitialization()
 	{
 		return 1;
 	}
+	xTransmissionData=xQueueCreate(20,sizeof(rfMessage));
+	if(xTransmissionData==NULL)
+	{
+		return 1;
+	}
+return 0;
 
 }
 
@@ -72,7 +80,7 @@ int semaphoreInitialization()
 	{
 		return 1;
 	}
-
+return 0;
 }
 
 
@@ -112,22 +120,30 @@ void vGyroProcessingtTask( void *pvParameters)
 	}
 
 }
+void vRfTransmissionTask(void *pvParameters)
+{
+		for( ;; )
+	{
+		rfTransmissionTask();
 
+	}
+}
 
 
 
 int main()
 {
 	portBASE_TYPE task1_pass;
-		portBASE_TYPE task2_pass;
+	portBASE_TYPE task2_pass;
+	portBASE_TYPE task3_pass;
 
 		gyroStart();
-
+	semaphoreInitialization();
  queueInitialization();
 	/* Create Task */
 	task1_pass = xTaskCreate( vGyroAcquisitionTask, "Gyro_Acquisition_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroAcquisition );
 	task2_pass = xTaskCreate( vGyroProcessingtTask, "Gyro_Processing_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroProcessing );
-	
+	task3_pass= xTaskCreate(vRfTransmissionTask,"RF_Transmission_Task",configMINIMAL_STACK_SIZE, NULL, 1,xTskRfTransmission);
 	if( task1_pass == pdPASS )
 	{
 			/* Start the Scheduler */ 

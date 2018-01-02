@@ -61,7 +61,7 @@ TIM_OCInitTypeDef  TIM_OCInitStructure;
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 	 /* Compute the prescaler value */
 	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
-	int i=SystemCoreClock;
+//	int i=SystemCoreClock;
   //PrescalerValue = (uint16_t) ((SystemCoreClock /2) / 28000000) - 1;//need to be reviewed later to get real values for our project
   /* Time base configuration */
   TIM_TimeBaseStructure.TIM_Period = period;

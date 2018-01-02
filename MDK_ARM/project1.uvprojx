@@ -623,6 +623,11 @@
               <FileType>1</FileType>
               <FilePath>..\src\pushButtonDriver.c</FilePath>
             </File>
+            <File>
+              <FileName>rfTransmissionTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\rfTransmissionTask.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -704,9 +709,9 @@
               <FilePath>..\inc\gyroProcessingTask.h</FilePath>
             </File>
             <File>
-              <FileName>main.h</FileName>
+              <FileName>rfTransmissionTask.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\inc\main.h</FilePath>
+              <FilePath>..\inc\rfTransmissionTask.h</FilePath>
             </File>
           </Files>
         </Group>

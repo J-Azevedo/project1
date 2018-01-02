@@ -32,7 +32,7 @@
 	 static EventGroupHandle_t xAckStatusFlags;
    static volatile uint8_t _mode=0; //current mode
 	 static const int serverNode=3;
-	 static int ackReceived=0;
+//	 static int ackReceived=0;
 	typedef enum {NOTRECEIVED = 0, RECEIVED = 1} ackState;
 /******************************************************************************
 *								Private Headers
@@ -103,6 +103,11 @@ static void sgpioInit(void)
 	
 	
 
+
+}
+void eventGroupInitialization()
+{
+	xAckStatusFlags=xEventGroupCreate();
 
 }
 //static void timInit(void)
@@ -221,7 +226,7 @@ static void sendFrame(const void *buffer)
 	{
 		writeReg(REG_FIFO ,message[i]);//transmit the message through the spi
 	}
-	
+	xEventGroupSetBits(xAckStatusFlags,PACKET_SENT|ACK_PENDING);//still need to see if this is needed
 	changeMode(RF69_MODE_TX);//change the mode to transmit the value that we wrote in to the FIFO
 	
 }
@@ -312,6 +317,7 @@ void transceiverInit(void)
 	int i=0;
  //here we initialize the spi peripheral and the corrensponding GPIO pins
 	tSpiInit();
+	eventGroupInitialization();
 
 // int value=(RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY);
 
@@ -381,18 +387,16 @@ void EXTI15_10_IRQHandler(void)
 	if (EXTI_GetITStatus(EXTI_Line11) != RESET) {
 		/* Do your stuff when PD0 is changed */
 		
-	/* we take the semaphore that is shared with the Transmit Data() so the transmit data can continue -> the semaphore can be taken here
-		and if we are waiting for an ACK and the overflow time finishes we can also take it in the timer ISR*/  	
+
 		
 		/*we indicate that the ack was received*/
-		if(xEventGroupGetBitsFromISR(xAckStatusFlags)==1<<0)
+		if(xEventGroupGetBitsFromISR(xAckStatusFlags)==PACKET_SENT)
 		{
 			xEventGroupClearBitsFromISR(xAckStatusFlags,PACKET_SENT);
 			
 		}
 		else
 		{
-			
 
 		
 			for(int i=0; i<0x2f; i++)
@@ -402,41 +406,12 @@ void EXTI15_10_IRQHandler(void)
 			}
 			xEventGroupClearBitsFromISR(xAckStatusFlags,ACK_PENDING);
 		
-
-					/*
-			before we exit the interrupt we have to stop the timer so it doesn't occur a overflow that migth create an error in our program
-					TIM_Cmd(TIM3, DISABLE);
-			*/
 		}
 				/* Clear interrupt flag */
 		EXTI_ClearITPendingBit(EXTI_Line11);
 	}
 }
 
-
-//void TIM3_IRQHandler()
-//{
-
-//    if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
-//    {
-//        TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
-//				ackReceived=NOTRECEIVED;
-//			
-
-//			/*
-//			before we exit the interrupt we have to stop the timer
-//					
-//			*/
-//	//		TIM_Cmd(TIM3, DISABLE);
-//			
-//			/*
-//			if this happens we take the semaphore and change some variable to signal that we have to re-transmit the message
-//			
-//			*/
-
-//		
-//		}
-//}
 
 
 void transmitData(const void *transferBuffer)
@@ -446,7 +421,7 @@ void transmitData(const void *transferBuffer)
 	//to be implemented later
 //while(ackReceived!=RECEIVED)
 	EventBits_t uxBits;
-const TickType_t xTicksToWait = 5000 / portTICK_PERIOD_MS;
+//const TickType_t xTicksToWait = 5000 / portTICK_PERIOD_MS;
 	
 	while((uxBits&ACK_PENDING)!=ACK_PENDING)
 	{
@@ -456,38 +431,23 @@ const TickType_t xTicksToWait = 5000 / portTICK_PERIOD_MS;
 	/*send the frame through the transeiver using the sendFrame() function*/
 	sendFrame(transferBuffer);
 	
-	/*now we wait for the semaphore to be taken to continue the execution of the function
-	when the semaphore is taken in this case it signals that the transmission ended sucessefuly
-	
-		while((xSemaphoreGive()!=pdTRUE));
-	*/
+
 	//for now do this way for testing later use eventgroupgetbits			
 			int i=0;
 	while(i!=0x8)
 		i=(readReg(REG_IRQFLAGS2)&0x08);
+	
+	
 //	xEventGroupGetBits->use this later
-//	  writeReg(REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_01); // DIO0 is "Packet Sent"
+//	  writeReg(REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_01); // DIO1 is "PayloadReady"
 	/*
 		changeMode(RF69_MODE_RX);
-	
-	BaseType_t xHigherPriorityTaskWoken=pdFALSE;*/
-	  /* Wait a maximum of 100ms for either bit 0 or bit 4 to be set within
-  the event group.  Clear the bits before exiting.*/
-	
-//  uxBits = xEventGroupWaitBits(
-//            xAckStatusFlags,   /* The event group being tested. */
-//            ACK_PENDING, /* The bits within the event group to wait for. */
-//            pdTRUE,        /* BIT_0 & BIT_4 should be cleared before returning. */
-//            pdFALSE,       /* Don't wait for both bits, either bit will do. */
-//            xTicksToWait );/* Wait a maximum of 100ms for either bit to be set. */
-
+	*/
+	//wait for a 1 second to get the values o the bits in the event group
+	 uxBits = xEventGroupWaitBits(xAckStatusFlags,ACK_PENDING,pdTRUE,pdFALSE,(1000/ portTICK_PERIOD_MS));
 
 	
 	/*
-	wait for ack flag to be received do this for 2 seconds->maybe less
-	  uxBits = xEventGroupWaitBits
-	*/
-/*
 	after this happened it will go to the beggining of the while and it will test the flag of the event group
 	correspondent to the ack received flag, if the flag is on the transmission ocorred successfully and we can continue the program execution
 	if the bit was not set we resend the message again
@@ -500,6 +460,6 @@ const TickType_t xTicksToWait = 5000 / portTICK_PERIOD_MS;
 		if the message was received we end the function and leave the critical section->->review if this should be a critical section or not
 		if we did not receive the ACK we retransmit the message
 	*/
-	/*here we leave the critical section*/
-	//to be implemented later
+	/*here we leave the critical section and do something to indicate the end of the message, maybe*/
+	//to be implemented later 
 }
