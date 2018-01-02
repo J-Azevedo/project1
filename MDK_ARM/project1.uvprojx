@@ -703,6 +703,11 @@
               <FileType>5</FileType>
               <FilePath>..\inc\gyroProcessingTask.h</FilePath>
             </File>
+            <File>
+              <FileName>main.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\main.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -788,8 +793,8 @@
           <targetInfo name="TetraplegicRealTimeAssistant"/>
         </targetInfos>
       </component>
-      <component Cclass="Device" Cgroup="Startup" Cvendor="Keil" Cversion="1.3.1" condition="STM32F4xx CMSIS Device">
-        <package name="STM32F4xx_DFP" schemaVersion="1.2" url="http://www.keil.com/pack" vendor="Keil" version="1.0.8"/>
+      <component Cclass="Device" Cgroup="Startup" Cvendor="Keil" Cversion="2.6.0" condition="STM32F4 CMSIS">
+        <package name="STM32F4xx_DFP" schemaVersion="1.3" url="http://www.keil.com/pack" vendor="Keil" version="2.11.0"/>
         <targetInfos>
           <targetInfo name="TetraplegicRealTimeAssistant"/>
         </targetInfos>
@@ -869,6 +874,12 @@
         <targetInfos>
           <targetInfo name="TetraplegicRealTimeAssistant"/>
         </targetInfos>
+      </file>
+      <file attr="config" category="source" condition="STM32F407xx_ARMCC" name="Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f407xx.s" version="2.6.0">
+        <instance index="0" removed="1">RTE\Device\STM32F407VG\startup_stm32f407xx.s</instance>
+        <component Cclass="Device" Cgroup="Startup" Cvendor="Keil" Cversion="2.6.0" condition="STM32F4 CMSIS"/>
+        <package name="STM32F4xx_DFP" schemaVersion="1.3" url="http://www.keil.com/pack" vendor="Keil" version="2.11.0"/>
+        <targetInfos/>
       </file>
       <file attr="config" category="source" condition="STM32F40_41x_ARMCC" name="Device\Source\ARM\startup_stm32f40_41xxx.s" version="1.0.0">
         <instance index="0">RTE\Device\STM32F407VG\startup_stm32f40_41xxx.s</instance>

@@ -36,11 +36,13 @@ xTaskHandle xTskGyroProcessing;
 *queue declaration
 *************************************/
 xQueueHandle xQGyroData;
+xQueueHandle xTransmissionData;
 
 /*************************************
 *semaphore declaration
 *************************************/
 xSemaphoreHandle xSemGyroDataProcessing;
+xSemaphoreHandle xSemMicrophoneStart;
 
 /*************************************
 *queue initialization
@@ -64,7 +66,12 @@ int queueInitialization()
 int semaphoreInitialization()
 {
 
-// xSemGyroDataProcessing=xSemaphoreCreateBinary
+ 
+	vSemaphoreCreateBinary(xSemMicrophoneStart);
+	if(xSemMicrophoneStart==NULL)
+	{
+		return 1;
+	}
 
 }
 

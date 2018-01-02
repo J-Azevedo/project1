@@ -29,7 +29,7 @@
 /******************************************************************************
 *								Private Variables
 *******************************************************************************/
-	  static EventGroupHandle_t xAckStatusFlags;
+	 static EventGroupHandle_t xAckStatusFlags;
    static volatile uint8_t _mode=0; //current mode
 	 static const int serverNode=3;
 	 static int ackReceived=0;

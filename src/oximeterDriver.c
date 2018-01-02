@@ -119,31 +119,48 @@ int oximeterStart()
 
   lastBeatThreshold = 0;
 
-	oximeterWrite(MAX30100_FIFO_WRITE, 0);
-	oximeterWrite(MAX30100_FIFO_READ, 0); //clear write and read pointers
+	i2cWrite(MAX30100_DEVICE,MAX30100_FIFO_WRITE, 0);
+	i2cWrite(MAX30100_DEVICE,MAX30100_FIFO_READ, 0); //clear write and read pointers
 	return 0;
 }
 
 // Writes val to address register on device
 void oximeterWrite(max30100Registers_t reg, uint8_t data)
 {
+	
+	i2cWrite(MAX30100_DEVICE,reg,data);
+	/*
 	I2C_GenerateSTART(I2C1, ENABLE); //beginTransmission(MAX30100_DEVICE)
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_MODE_SELECT));
 	I2C_Send7bitAddress(I2C1, MAX30100_DEVICE, I2C_Direction_Transmitter);
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
 	I2C_SendData(I2C1, reg);
+	while(!I2C_CheckEvent(I2C1,	I2C_EVENT_MASTER_BYTE_TRANSMITTING));
 	I2C_SendData(I2C1, data); //send value to write
-	I2C_GenerateSTOP(I2C1, ENABLE);//endTransmission
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+	I2C_GenerateSTOP(I2C1, ENABLE);//endTransmission*/
+	
 }
 
 uint8_t oximeterRead(max30100Registers_t reg)
 {
 	uint8_t readuint8_t;
+	i2cRead(MAX30100_DEVICE,reg);
 	I2C_GenerateSTART(I2C1, ENABLE); //beginTransmission(MAX30100_DEVICE)
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_MODE_SELECT));
+
 	I2C_Send7bitAddress(I2C1, MAX30100_DEVICE, I2C_Direction_Transmitter);
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
+
 	I2C_SendData(I2C1, reg);
-	
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
+
 	I2C_GenerateSTART(I2C1, ENABLE);
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_MODE_SELECT));
 	I2C_Send7bitAddress(I2C1, MAX30100_DEVICE, I2C_Direction_Receiver);
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
 	readuint8_t=I2C_ReceiveData(I2C1); //requestFrom(MAX30100_DEVICE)
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_BYTE_RECEIVED));//not sure if it is needed, need testing
 	
 	I2C_GenerateSTOP(I2C1, ENABLE);//endTransmission
 	return readuint8_t;
@@ -156,7 +173,7 @@ fifo_t oximeterReadFIFO() //read one sample
 	int tmp;
 	while(!tmp) //wait for HR_RDY flag set
 	{
-		tmp=oximeterRead(MAX30100_INT_STATUS);
+		tmp=	i2cRead(MAX30100_DEVICE,MAX30100_INT_STATUS);
 		tmp&=HR_RDY;
 	}
 	/*uint8_t NUM_AVAILABLE_SAMPLES;
@@ -278,28 +295,28 @@ void readFrom(max30100Registers_t reg, int num, uint8_t* _buff)
 
 void setLEDCurrents(uint8_t redLedCurrent, uint8_t IRLedCurrent)
 {
-  oximeterWrite( MAX30100_LED_CONF, (redLedCurrent << 4) | IRLedCurrent );
+  i2cWrite(MAX30100_DEVICE, MAX30100_LED_CONF, (redLedCurrent << 4) | IRLedCurrent );
 }
 
 void setInterrupt(uint8_t interrupt)
 {
-	oximeterWrite(MAX30100_INT_ENABLE, 0x80|0x20); //enable ALMOST_FULL and HD_RDY interrupts
+	i2cWrite(MAX30100_DEVICE,MAX30100_INT_ENABLE, 0x80|0x20); //enable ALMOST_FULL and HD_RDY interrupts
 }
 
 void setMode(Mode mode)
 {
-  uint8_t currentModeReg = oximeterRead(MAX30100_MODE_CONF);
-  oximeterWrite( MAX30100_MODE_CONF, (currentModeReg & 0xF8) | mode );
+  uint8_t currentModeReg = i2cRead(MAX30100_DEVICE, MAX30100_MODE_CONF);
+  i2cWrite(MAX30100_DEVICE, MAX30100_MODE_CONF, (currentModeReg & 0xF8) | mode );
 }
 
 void setSamplingRate(SamplingRate rate)
 {
-  uint8_t currentSpO2Reg = oximeterRead( MAX30100_SPO2_CONF );
-  oximeterWrite( MAX30100_SPO2_CONF, ( currentSpO2Reg & 0xE3 ) | (rate<<2) );
+  uint8_t currentSpO2Reg = i2cRead(MAX30100_DEVICE,  MAX30100_SPO2_CONF );
+  i2cWrite(MAX30100_DEVICE, MAX30100_SPO2_CONF, ( currentSpO2Reg & 0xE3 ) | (rate<<2) );
 }
 
 void setLEDPulseWidth(LEDPulseWidth pw)
 {
-  uint8_t currentSpO2Reg = oximeterRead( MAX30100_SPO2_CONF );
-  oximeterWrite( MAX30100_SPO2_CONF, ( currentSpO2Reg & 0xFC ) | pw );
+  uint8_t currentSpO2Reg = i2cRead(MAX30100_DEVICE,  MAX30100_SPO2_CONF );
+  i2cWrite(MAX30100_DEVICE, MAX30100_SPO2_CONF, ( currentSpO2Reg & 0xFC ) | pw );
 }
