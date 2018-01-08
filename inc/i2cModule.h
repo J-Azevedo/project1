@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    spiModule.h
+  * @file    i2cModule.h
   * @author  Joao 
   * @date    15-November-2017
   * @brief   This file contains all the functions prototypes for the SPI 
@@ -11,11 +11,17 @@
 #ifndef __I2CMODULE_H__
 #define __I2CMODULE_H__
 
-#include "stm32f4xx.h"
 
-void i2cInit(void);
-void i2cWrite(uint8_t, uint8_t, uint8_t);
-uint8_t i2cRead(uint8_t, uint8_t);
+
+
+
+void i2c_init(void);
+void EXTI_PD7(void);
+
+
+
+
+
 
 
 #endif /*__I2CMODULE_H__*/

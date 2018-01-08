@@ -1,9 +1,16 @@
 /* Includes ------------------------------------------------------------------*/
+#include <FreeRTOS.h>
 #include "i2sModule.h"
 #include "microphoneDriver.h"
 #include "pdm_filter.h"
+#include <task.h>
 #include "stm32f4xx_dma.h"              // Keil::Device:StdPeriph Drivers:DMA
-#include "WordsData.h"
+#include "wordData.h"
+#include "stm32f4_discovery.h"
+#include <semphr.h>
+
+extern xSemaphoreHandle xSemMicRecordingFinish; 
+extern TaskHandle_t xTaskToNotify;
 
 /******************************************************************************
 *								Public Variables
@@ -24,29 +31,18 @@ must pass to the function the pointer to the first sample of the channel to be o
 static unsigned short int memory_buffer1[PCM_OUT_SIZE];
 static PDMFilter_InitStruct filter;
 
-/* Main buffer pointer for the recorded data storing */
-/* Temporary data sample */
-//static uint16_t InternalBuffer[INTERNAL_BUFF_SIZE];
-//static uint32_t InternalBufferSize = 0;
 
 /******************************************************************************
 *								Private Headers
 *******************************************************************************/
 
-static void Delay(volatile unsigned int n_count);
 static void dmaInit(void);
-//static void microphoneNVICInit(void);
 static void microphoneGPIOInit(void);
 static void dmaBufferSwap(short int*);
-
 
 /*****************************************************************************
 *			Private Functions
 ******************************************************************************/
-static void Delay(volatile unsigned int n_count){
-  for(; n_count != 0; n_count--);
-}
-
 static void dmaInit(void)
 {
 	NVIC_InitTypeDef NVIC_InitStruct;
@@ -94,52 +90,33 @@ static void dmaBufferSwap(short int* buffer)
 {
 	static int j = 0;
 	unsigned int i;
-	volatile unsigned char word;
+	static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 	
 	for(i = 0; i < 16; i=i+2)
-		recordData[j++] = buffer[i]; // / 32768.0; //PCM output copied to global variable recordData
+		recordData[j++] = buffer[i]/ 32768.0; //PCM output copied to global variable recordData
 	
 	if(j == BUFFER_MIC_SIZE)
 	{
 		microphoneStop();
 		j = 0;
-		word = WordRecognize(&vocabulary, recordData, BUFFER_MIC_SIZE);// recognition process
-
-
-		//Meter aqui semaphore para indicar fim de leitura
-		//implementaçao em fase seguinte
 		
-//		xSemaphoreGiveFromISR(xSem_Rec_Finish, &xHigherPriorityTaskWoken);
-//		
-//		
-//		if(xHigherPriorityTaskWoken == pdTRUE)
-//		{
-//			portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-//		}
-//  
-//		portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+		xSemaphoreGiveFromISR(xSemMicRecordingFinish, &xHigherPriorityTaskWoken);
+		//configASSERT( xTaskToNotify != NULL );
+//		vTaskNotifyGiveFromISR( xTaskToNotify, &xHigherPriorityTaskWoken );
+//		xTaskToNotify = NULL;
+		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+		
+//		if(xHigherPriorityTaskWoken == pdTRUE) //xHigherPriorityTaskWoken == pdTRUE if giving the semaphore caused a task to unblock, and the unblocked task has a priority higher than the currently running task.
+//			portYIELD_FROM_ISR(xHigherPriorityTaskWoken); //If xHigherPriorityTaskWoken == pdTRUE then a context switch should be requested 
+		
+		portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+
 	}
 }
-
-//static void microphoneNVICInit(void)
-//{
-//  NVIC_InitTypeDef NVIC_InitStructure;
-
-//  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3); 
-//  /* Configure the SPI interrupt priority */
-//  NVIC_InitStructure.NVIC_IRQChannel = SPI2_IRQn;
-//  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-//  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-//  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//  NVIC_Init(&NVIC_InitStructure);
-//}
 
 static void microphoneGPIOInit(void)
 {  
   GPIO_InitTypeDef GPIO_InitStructure;
-
-  /* Enable GPIO clocks */
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB | RCC_AHB1Periph_GPIOC, ENABLE);
 
   /* Enable GPIO clocks */
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB | RCC_AHB1Periph_GPIOC, ENABLE);
@@ -152,8 +129,6 @@ static void microphoneGPIOInit(void)
   /* SPI SCK pin configuration */
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
-  
-  /* Connect SPI pins to AF5 */  
   GPIO_PinAFConfig(GPIOB, GPIO_PinSource10, GPIO_AF_SPI2);
   
   /* SPI MOSI pin configuration */
@@ -166,7 +141,6 @@ static void microphoneGPIOInit(void)
 void DMA1_Stream3_IRQHandler(void)
 {
 	unsigned int i;
-	int32_t n_samples;
 	// Transfer complete from micrphone to DMA interrupt, in 1st iteration buffer0 fills, buffer1 has nothing to process
 	//2nd iteration buffer0 sends data to process, buffer 1 fills
   if(DMA_GetITStatus(DMA1_Stream3, DMA_IT_TCIF3) != RESET) //DMA_GetFlagStatus(DMA1_Stream3, DMA_FLAG_TCIF3)
@@ -176,7 +150,7 @@ void DMA1_Stream3_IRQHandler(void)
 		{
 			for(i = 0; i < 64; i++)
 				record_buffer0[i] = HTONS(record_buffer0[i]); //turn into big endian format
-			n_samples=PDM_Filter_64_LSB((uint8_t *)record_buffer0, (uint16_t *)memory_buffer0, VOLUME, &filter); /*process a millisecond of PDM data from a single microphone.
+			PDM_Filter_64_LSB((uint8_t *)record_buffer0, (uint16_t *)memory_buffer0, VOLUME, &filter); /*process a millisecond of PDM data from a single microphone.
 			They return a number of PCM samples equal to the frequency defined in the filter initialization (rate), divided by 1000.*/
 			//64 refers to decimation factor, LSB refers to representation of record_buffer0, returns 16 samples
 			dmaBufferSwap((short int*)memory_buffer0);
@@ -185,77 +159,46 @@ void DMA1_Stream3_IRQHandler(void)
 		{
 			for(i = 0; i < 64; i++)
 				record_buffer1[i] = HTONS(record_buffer1[i]);
-			n_samples=PDM_Filter_64_LSB((uint8_t *)record_buffer1, (uint16_t *)memory_buffer1, VOLUME, &filter); //convert pdm to pcm
+			PDM_Filter_64_LSB((uint8_t *)record_buffer1, (uint16_t *)memory_buffer1, VOLUME, &filter); //convert pdm to pcm
 			dmaBufferSwap((short int*)memory_buffer1);
 		}
 	}
 }
 
-//void SPI2_IRQHandler(void)
-//{  
-//	u16 app;
-//  /* Check if data are available in SPI Data register */
-//  if (SPI_GetITStatus(SPI2, SPI_I2S_IT_RXNE) != RESET)
-//  {
-//    app = SPI_I2S_ReceiveData(SPI2);
-//    record_buffer0[InternalBufferSize++] = HTONS(app);
-//    
-//    /* Check to prevent overflow condition */
-//    if (InternalBufferSize >= INTERNAL_BUFF_SIZE)
-//    {
-//      InternalBufferSize = 0;
-//      
-//      PDM_Filter_64_LSB((uint8_t *)record_buffer0, (uint16_t *)memory_buffer0, VOLUME , (PDMFilter_InitStruct *)&filter);
-//    }
-//  }
-//}
 
 /*****************************************************************************
 *			Public Functions
 ******************************************************************************/
 
 void microphoneInit()//, uint32_t BitRes, uint32_t ChnlNbr)
-{
-	Delay(10000);
-	
+{	
 	/*Before calling the PDM_Filter_Init() function, the application code must enable the clock of
-the STM32 microcontroller CRC peripheral (configuration done in RCC register)*/
+	the STM32 microcontroller CRC peripheral (configuration done in RCC register)*/
   // Enable CRC module  
   RCC->AHB1ENR |= RCC_AHB1ENR_CRCEN;
-  
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, ENABLE);
-	
+  	
   /* Filter LP & HP Init */
-  filter.LP_HZ = (SAMPLE_FREQUENCY / 2.0); //Defines the low pass filter cut-off frequency. To reduce the sampling frequency
+  filter.LP_HZ = (I2S_AudioFreq_16k / 2.0); //Defines the low pass filter cut-off frequency. To reduce the sampling frequency
   filter.HP_HZ = 10; /*Defines the high pass filter cut frequency. To remove the signal DC offset,  It has
 	been implemented via an IIR filter with a cut-off frequency below the audible frequency
 	range in order to preserve signal quality.*/
-  filter.Fs = SAMPLE_FREQUENCY; //Defines the frequency output of the filter in Hz.
+  filter.Fs = I2S_AudioFreq_16k; //Defines the frequency output of the filter in Hz.
   filter.Out_MicChannels = 1; /*Defines the number of microphones in the output stream; this
 	parameter is used to interlace different microphones in the output buffer. Each sample
 	is a 16-bit value.*/
   filter.In_MicChannels = 1; /*Define the number of microphones in the input stream. This
 	parameter is used to specify the interlacing of microphones in the input buffer. The
 	PDM samples are grouped eight by eight in u8 format (8-bit).*/
-  PDM_Filter_Init(&filter);
+  PDM_Filter_Init((PDMFilter_InitStruct *)&filter);
 
 	microphoneGPIOInit();
-	
-	
   i2sInit();
-	
-  dmaInit();
-
-	Delay(10000);
-
+	dmaInit();
 }
 
 void microphoneStart()//uint16_t* pbuf, uint32_t size)
 {
-//	/* Store the location and size of the audio buffer */
-//  pAudioRecBuf = pbuf;
-//  AudioRecCurrSize = size;
-//    
+	STM_EVAL_LEDOn(LED3);
 	
 	//Enable DMA stream for I2S peripheral
 	DMA_Cmd(DMA1_Stream3, ENABLE);
@@ -264,11 +207,11 @@ void microphoneStart()//uint16_t* pbuf, uint32_t size)
 	//Enable the I2S peripheral
 	if ((SPI2->I2SCFGR & 0x0400) == 0)
 		I2S_Cmd(SPI2, ENABLE);
-	
 }
 
 void microphoneStop()
 {
+	STM_EVAL_LEDOff(LED3);
 	//Disable DMA stream for I2S peripheral
 	DMA_Cmd(DMA1_Stream3,DISABLE);
 	
@@ -278,4 +221,3 @@ void microphoneStop()
 	//Disable the I2S peripheral
 	I2S_Cmd(SPI2, DISABLE);
 }
-

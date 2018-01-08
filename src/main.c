@@ -12,7 +12,12 @@
 #include "buzzerDriver.h"
 #include "pushButtonDriver.h"
 #include "gyroscopeDriver.h"
+#include "MAX30100.h"
+#include "stm32f4_discovery.h"
+#include "wordData.h"
 /*Task includes*/
+#include "microphoneAcquisitionTask.h"
+#include "microphoneProcessingTask.h"
 #include "gyroAcquisitionTask.h"
 #include "gyroProcessingTask.h"
 #include "rfTransmissionTask.h"
@@ -23,6 +28,11 @@
 #define ARM_MATH_CM4
 #endif
 
+#ifndef ARM_MATH_CM4
+#define ARM_MATH_CM4
+#endif
+
+
 
 
 void prvSetupLed(void);
@@ -32,6 +42,9 @@ void prvSetupLed(void);
 *************************************/
 xTaskHandle xTskGyroAcquisition;
 xTaskHandle xTskGyroProcessing;
+xTaskHandle xTskMicrophoneAcquisition;
+xTaskHandle xTskMicrophoneProcessing;
+xTaskHandle xTskPBAcquisition;
 xTaskHandle xTskRfTransmission;
 
 /*************************************
@@ -40,11 +53,15 @@ xTaskHandle xTskRfTransmission;
 xQueueHandle xQGyroData;
 xQueueHandle xTransmissionData;
 
+
 /*************************************
 *semaphore declaration
 *************************************/
-//xSemaphoreHandle xSemGyroDataProcessing;
 xSemaphoreHandle xSemMicrophoneStart;
+xSemaphoreHandle xSemMicRecordingFinish;
+xSemaphoreHandle xSemMicProcessingFinish;
+xSemaphoreHandle xSemPBFinish; 
+xSemaphoreHandle xSemOximeterAcquisitionFinish;
 
 /*************************************
 *queue initialization
@@ -80,6 +97,42 @@ int semaphoreInitialization()
 	{
 		return 1;
 	}
+	vSemaphoreCreateBinary(xSemMicrophoneStart);
+	if(xSemMicrophoneStart==NULL)
+	{
+		return 1;
+	}
+	
+	vSemaphoreCreateBinary(xSemMicRecordingFinish);
+	if(xSemMicRecordingFinish==NULL)
+	{
+		return 1;
+	}
+ 
+	vSemaphoreCreateBinary(xSemMicProcessingFinish);
+	if(xSemMicProcessingFinish==NULL)
+	{
+		return 1;
+	}
+	
+	vSemaphoreCreateBinary(xSemPBFinish);
+	if(xSemPBFinish==NULL)
+	{
+		return 1;
+	}
+
+	vSemaphoreCreateBinary(xSemOximeterAcquisitionFinish)
+	if(xSemOximeterAcquisitionFinish==NULL)
+	{
+		return 1;
+	}
+	/* Semaphores must be taken in the beginning to reset the counter */
+	xSemaphoreTake( xSemMicrophoneStart, portMAX_DELAY);
+	xSemaphoreTake( xSemMicRecordingFinish, portMAX_DELAY);
+	xSemaphoreTake( xSemMicProcessingFinish, portMAX_DELAY);
+	xSemaphoreTake( xSemPBFinish, portMAX_DELAY);
+	xSemaphoreTake(	xSemOximeterAcquisitionFinish,portMAX_DELAY);
+	
 return 0;
 }
 
@@ -122,12 +175,55 @@ void vGyroProcessingtTask( void *pvParameters)
 }
 void vRfTransmissionTask(void *pvParameters)
 {
-		for( ;; )
+	for( ;; )
 	{
 		rfTransmissionTask();
 
 	}
 }
+void voximeterAcquisitionTask(void *pvParameters)
+{
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = 120000/portTICK_RATE_MS;
+
+  // Initialise the xLastWakeTime variable with the current time.
+  xLastWakeTime = xTaskGetTickCount();
+	for( ;; )
+	{
+		void oximeterAcquisitionTask(TickType_t);
+
+
+
+	}
+}
+void vMicrophoneAcquisitionTask(void *pvParameters)
+{
+	//xTaskToNotify = xTaskGetCurrentTaskHandle();
+		for( ;; )
+	{
+		microphoneAcquisitionTask();
+	}
+}
+
+void vMicrophoneProcessingTask(void *pvParameters)
+{
+		for( ;; )
+	{
+		microphoneProcessingTask();
+	}
+}
+
+void vPBAcquisitionTask(void *pvParameters)
+{
+	xSemaphoreTake(xSemMicProcessingFinish, portMAX_DELAY);
+	pushButtonInit(); //enables external interrupt
+		for( ;; )
+	{
+			
+	}
+}
+
+
 
 
 
@@ -137,23 +233,28 @@ int main()
 	portBASE_TYPE task2_pass;
 	portBASE_TYPE task3_pass;
 
-		gyroStart();
+	i2c_init();											//done
+
+	ResetMAX();
+	EXTI_PD7();
+	gyroStart();
+	transceiverInit();
 	semaphoreInitialization();
- queueInitialization();
+	queueInitialization();
 	/* Create Task */
-	task1_pass = xTaskCreate( vGyroAcquisitionTask, "Gyro_Acquisition_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroAcquisition );
-	task2_pass = xTaskCreate( vGyroProcessingtTask, "Gyro_Processing_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroProcessing );
-	task3_pass= xTaskCreate(vRfTransmissionTask,"RF_Transmission_Task",configMINIMAL_STACK_SIZE, NULL, 1,xTskRfTransmission);
-	if( task1_pass == pdPASS )
-	{
-			/* Start the Scheduler */ 
-			vTaskStartScheduler(); 
-	}
-	else
-	{
-			/* ERROR! Creating the Tasks */
-			return -2;
-	}
+//	task1_pass = xTaskCreate( vGyroAcquisitionTask, "Gyro_Acquisition_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroAcquisition );
+//	task2_pass = xTaskCreate( vGyroProcessingtTask, "Gyro_Processing_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroProcessing );
+//	task3_pass= xTaskCreate(vRfTransmissionTask,"RF_Transmission_Task",configMINIMAL_STACK_SIZE, NULL, 1,xTskRfTransmission);
+//	if( task1_pass == pdPASS )
+//	{
+//			/* Start the Scheduler */ 
+//			vTaskStartScheduler(); 
+//	}
+//	else
+//	{
+//			/* ERROR! Creating the Tasks */
+//			return -2;
+//	}
 //	short int data[10]={0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21};
 
 //	transceiverInit();
@@ -168,7 +269,7 @@ int main()
 	buzzerStart();*/
 //	pushButtonInit();
 	
-
+while(1);
 	return 0;
 }
 

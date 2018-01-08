@@ -132,7 +132,6 @@ float nearestNeighbour2[99][11] =//k=3
 
 extern xSemaphoreHandle xSemMicrophoneStart;
 extern xQueueHandle xQGyroData;
-//static l3gd20Data lastcaptures[20];
 extern xTaskHandle xTskGyroAcquisition;
 
 

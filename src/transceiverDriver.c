@@ -67,7 +67,7 @@ static void sgpioInit(void)
 	 /* Set pin as input */
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
 	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_11;
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_10;
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_Init(GPIOD, &GPIO_InitStruct);
@@ -384,7 +384,7 @@ void EXTI15_10_IRQHandler(void)
 {
 		short int message[10]={0};
 	/* Make sure that interrupt flag is set */
-	if (EXTI_GetITStatus(EXTI_Line11) != RESET) {
+	if (EXTI_GetITStatus(EXTI_Line10) != RESET) {
 		/* Do your stuff when PD0 is changed */
 		
 
@@ -433,13 +433,13 @@ void transmitData(const void *transferBuffer)
 	
 
 	//for now do this way for testing later use eventgroupgetbits			
-			int i=0;
-	while(i!=0x8)
+		int i=0;
+		while(i!=0x8)
 		i=(readReg(REG_IRQFLAGS2)&0x08);
 	
 	
 //	xEventGroupGetBits->use this later
-//	  writeReg(REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_01); // DIO1 is "PayloadReady"
+	  writeReg(REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_01); // DIO1 is "PayloadReady"
 	/*
 		changeMode(RF69_MODE_RX);
 	*/

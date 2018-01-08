@@ -529,11 +529,6 @@
               <FilePath>..\src\MicrophoneDriver.c</FilePath>
             </File>
             <File>
-              <FileName>oximeterDriver.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\oximeterDriver.c</FilePath>
-            </File>
-            <File>
               <FileName>rtcDriver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\rtcDriver.c</FilePath>
@@ -604,16 +599,6 @@
               <FilePath>..\src\transceiverDriver.c</FilePath>
             </File>
             <File>
-              <FileName>WordsData.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\WordsData.c</FilePath>
-            </File>
-            <File>
-              <FileName>WordsRecognizer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\WordsRecognizer.c</FilePath>
-            </File>
-            <File>
               <FileName>gyroAcquisitionTask.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\gyroAcquisitionTask.c</FilePath>
@@ -627,6 +612,36 @@
               <FileName>rfTransmissionTask.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\rfTransmissionTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>MAX30100.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\MAX30100.c</FilePath>
+            </File>
+            <File>
+              <FileName>oximeterAcquisitionTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\oximeterAcquisitionTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>microphoneAcquisitionTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\microphoneAcquisitionTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>microphoneProcessingTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\microphoneProcessingTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>wordRecognizer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\wordRecognizer.c</FilePath>
+            </File>
+            <File>
+              <FileName>wordData.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\wordData.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -659,11 +674,6 @@
               <FilePath>..\inc\MicrophoneDriver.h</FilePath>
             </File>
             <File>
-              <FileName>oximeterDriver.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\inc\oximeterDriver.h</FilePath>
-            </File>
-            <File>
               <FileName>pushButtonDriver.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\inc\pushButtonDriver.h</FilePath>
@@ -689,16 +699,6 @@
               <FilePath>..\inc\spiModule.h</FilePath>
             </File>
             <File>
-              <FileName>WordsRecognizer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\inc\WordsRecognizer.h</FilePath>
-            </File>
-            <File>
-              <FileName>WordsData.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\inc\WordsData.h</FilePath>
-            </File>
-            <File>
               <FileName>gyroAcquisitionTask.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\inc\gyroAcquisitionTask.h</FilePath>
@@ -712,6 +712,31 @@
               <FileName>rfTransmissionTask.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\inc\rfTransmissionTask.h</FilePath>
+            </File>
+            <File>
+              <FileName>MAX30100_Registers.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\MAX30100_Registers.h</FilePath>
+            </File>
+            <File>
+              <FileName>MAX30100.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\MAX30100.h</FilePath>
+            </File>
+            <File>
+              <FileName>oximeterAcquisitionTask.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\oximeterAcquisitionTask.h</FilePath>
+            </File>
+            <File>
+              <FileName>wordRecognizer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\wordRecognizer.h</FilePath>
+            </File>
+            <File>
+              <FileName>wordData.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\wordData.h</FilePath>
             </File>
           </Files>
         </Group>

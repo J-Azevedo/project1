@@ -1,5 +1,7 @@
 #include "oximeterDriver.h"
 #include "i2cModule.h"
+#include "MAX30100_Registers.h"
+
 
 /******************************************************************************
 *								Public Variables
@@ -10,187 +12,257 @@ float redACValueSqSum;
 uint16_t samplesRecorded;
 uint16_t pulsesDetected;
 float currentSaO2Value;
-
-
+uint8_t FIFO[256], fifoptr=0, Sendptr=0;
 /******************************************************************************
 *								Private Variables
-*******************************************************************************/
-static uint8_t currentPulseDetectorState;
+//*******************************************************************************/
+//static uint8_t currentPulseDetectorState;
 
-static float currentBPM;
-static float valuesBPM[PULSE_BPM_SAMPLE_SIZE];
-static float valuesBPMSum;
-static uint8_t valuesBPMCount;
-static uint8_t bpmIndex;
-static uint32_t lastBeatThreshold;
+//static float currentBPM;
+//static float valuesBPM[PULSE_BPM_SAMPLE_SIZE];
+//static float valuesBPMSum;
+//static uint8_t valuesBPMCount;
+//static uint8_t bpmIndex;
+//static uint32_t lastBeatThreshold;
 
-static SamplingRate samplingRate;
-static Mode mode;
-static LEDPulseWidth pulseWidth; 
-static LEDCurrent IrLedCurrent;
+//static SamplingRate samplingRate;
+//static Mode mode;
+//static LEDPulseWidth pulseWidth; 
+//static LEDCurrent IrLedCurrent;
 
-static dcFilter_t dcFilterIR;
-static dcFilter_t dcFilterRed;
-static butterworthFilter_t lpbFilterIR;
-static meanDiffFilter_t meanDiffIR;
+//static dcFilter_t dcFilterIR;
+//static dcFilter_t dcFilterRed;
+//static butterworthFilter_t lpbFilterIR;
+//static meanDiffFilter_t meanDiffIR;
 
 
-void oximeterInit(void)
+
+
+void EXTI_PD7(void)
 {
-	GPIO_InitTypeDef GPIO_InitStruct;
-	
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE); //enable SDA, SCL  and SMBA (when used) GPIO clocks
-	
-	/*(#) Peripherals alternate function: 
-        (++) Connect the pin to the desired peripherals' Alternate 
-             Function (AF) using GPIO_PinAFConfig() function
-        (++) Configure the desired pin in alternate function by:
-             GPIO_InitStruct->GPIO_Mode = GPIO_Mode_AF
-        (++) Select the type, pull-up/pull-down and output speed via 
-             GPIO_PuPd, GPIO_OType and GPIO_Speed members
-        (++) Call GPIO_Init() function
-             Recommended configuration is Push-Pull, Pull-up, Open-Drain.
-             Add an external pull up if necessary (typically 4.7 KOhm).      */
-	
-		//here i could use GPIO_StructInit() to fill each GPIO_InitStruct member with its default value
-	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF; // alternate function
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz; // clock speed
-	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP; // push/pull 
-	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL; // pullup/pulldown resistors inactive
-		
-	/* I2C1 SCL pin configuration */	
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_8; // GPIO pin		
-	// Setting GPIO peripheral corresponding bits
-	GPIO_Init(GPIOB, &GPIO_InitStruct);		
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource5, GPIO_AF_I2C1); 
-	
-	/* I2C1 SDA pin configuration */
-  GPIO_InitStruct.GPIO_Pin =  GPIO_Pin_9; //isto sao masks logo n se substituem
-  GPIO_Init(GPIOB, &GPIO_InitStruct);
-  GPIO_PinAFConfig(GPIOB, GPIO_PinSource9, GPIO_AF_I2C1);
+    /* Set variables used */
+    GPIO_InitTypeDef GPIO_InitStruct;
+    EXTI_InitTypeDef EXTI_InitStruct;
+    NVIC_InitTypeDef NVIC_InitStruct;
+    
+    /* Enable clock for GPIOD */
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
+    /* Enable clock for SYSCFG */
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+    
+    /* Set pin as input */
+    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
+    GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_7;
+    GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
+    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOD, &GPIO_InitStruct);
+    
+    /* Tell system that you will use PD0 for EXTI_Line7 */
+    SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource7);
+    
+    /* PD0 is connected to EXTI_Line7 */
+    EXTI_InitStruct.EXTI_Line = EXTI_Line7;
+    /* Enable interrupt */
+    EXTI_InitStruct.EXTI_LineCmd = ENABLE;
+    /* Interrupt mode */
+    EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt;
+    /* Triggers on rising and falling edge */
+    EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Falling;
+    /* Add to EXTI */
+    EXTI_Init(&EXTI_InitStruct);
+ 
+    /* Add IRQ vector to NVIC */
+    /* PD0 is connected to EXTI_Line7, which has EXTI7_IRQn vector */
+    NVIC_InitStruct.NVIC_IRQChannel = EXTI9_5_IRQn;
+    /* Set priority */
+    NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0x00;
+    /* Set sub priority */
+    NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0x00;
+    /* Enable interrupt */
+    NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+    /* Add to NVIC */
+    NVIC_Init(&NVIC_InitStruct);
 }
+
+
+
 
 int oximeterStart()
 {
-	oximeterInit();
-	IrLedCurrent = DEFAULT_IR_LED_CURRENT; //50mA
-	pulseWidth = DEFAULT_LED_PULSE_WIDTH; //1600us
-	mode = MAX30100_MODE_HR_ONLY;
-	samplingRate = DEFAULT_SAMPLING_RATE; //100hz
-	currentPulseDetectorState = PULSE_IDLE;
+	char c=0;
+		i2cInit();
 
-  setMode( mode );
+//	IrLedCurrent = DEFAULT_IR_LED_CURRENT; //50mA
+//	pulseWidth = DEFAULT_LED_PULSE_WIDTH; //1600us
+//	mode = MAX30100_MODE_HR_ONLY;
+//	samplingRate = DEFAULT_SAMPLING_RATE; //100hz
+//	currentPulseDetectorState = PULSE_IDLE;
+	if(ResetMAX()!=1)
+		c++;
+	EXTI_PD7();
+	if(ModuleConfig()!=1)
+		c++;
+
+//	c=i2cRead(0x12,0xff);
+//	c=ReadByte(0xff);
+ // setMode( mode );
 
   //Check table 8 in datasheet on page 19. You can't just throw in sample rate and pulse width randomly. 100hz + 1600us is max for that resolution
-  setSamplingRate( samplingRate );
-  setLEDPulseWidth( pulseWidth ); //resolution 16 bits ADC for 1600us pulse width
-	setInterrupt( 0x80|0x20 ); //ALMOST_FULL and HR_RDY interrupts
+ // setSamplingRate( samplingRate );
+ // setLEDPulseWidth( pulseWidth ); //resolution 16 bits ADC for 1600us pulse width
+//	setInterrupt( 0x80|0x20 ); //ALMOST_FULL and HR_RDY interrupts
 
-  IrLedCurrent = MAX30100_LED_CURRENT_27_1MA;
-	setLEDCurrents(0, IrLedCurrent );
+//  IrLedCurrent = MAX30100_LED_CURRENT_27_1MA;
+////	setLEDCurrents(0, IrLedCurrent );
 
-  dcFilterIR.w = 0;
-  dcFilterIR.result = 0;
+//  dcFilterIR.w = 0;
+//  dcFilterIR.result = 0;
 
-  dcFilterRed.w = 0;
-  dcFilterRed.result = 0;
-
-
-  lpbFilterIR.v[0] = 0;
-  lpbFilterIR.v[1] = 0;
-  lpbFilterIR.result = 0;
-
-  meanDiffIR.index = 0;
-  meanDiffIR.sum = 0;
-  meanDiffIR.count = 0;
+//  dcFilterRed.w = 0;
+//  dcFilterRed.result = 0;
 
 
-  valuesBPM[0] = 0;
-  valuesBPMSum = 0;
-  valuesBPMCount = 0;
-  bpmIndex = 0;
-  
+//  lpbFilterIR.v[0] = 0;
+//  lpbFilterIR.v[1] = 0;
+//  lpbFilterIR.result = 0;
 
-  irACValueSqSum = 0;
-  redACValueSqSum = 0;
-  samplesRecorded = 0;
-  pulsesDetected = 0;
-  currentSaO2Value = 0;
+//  meanDiffIR.index = 0;
+//  meanDiffIR.sum = 0;
+//  meanDiffIR.count = 0;
 
-  lastBeatThreshold = 0;
 
-	i2cWrite(MAX30100_DEVICE,MAX30100_FIFO_WRITE, 0);
-	i2cWrite(MAX30100_DEVICE,MAX30100_FIFO_READ, 0); //clear write and read pointers
+//  valuesBPM[0] = 0;
+//  valuesBPMSum = 0;
+//  valuesBPMCount = 0;
+//  bpmIndex = 0;
+//  
+
+//  irACValueSqSum = 0;
+//  redACValueSqSum = 0;
+//  samplesRecorded = 0;
+//  pulsesDetected = 0;
+//  currentSaO2Value = 0;
+
+//  lastBeatThreshold = 0;
+
+	
 	return 0;
 }
 
-// Writes val to address register on device
-void oximeterWrite(max30100Registers_t reg, uint8_t data)
-{
+/*************************************************************************************
+ *																READ FIFO FUNCTION	  														 *
+ *************************************************************************************/
+int ReadFIFO(){
+	unsigned short int i=0;
+	uint8_t buff[4];
 	
-	i2cWrite(MAX30100_DEVICE,reg,data);
-	/*
-	I2C_GenerateSTART(I2C1, ENABLE); //beginTransmission(MAX30100_DEVICE)
-	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_MODE_SELECT));
-	I2C_Send7bitAddress(I2C1, MAX30100_DEVICE, I2C_Direction_Transmitter);
-	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
-	I2C_SendData(I2C1, reg);
-	while(!I2C_CheckEvent(I2C1,	I2C_EVENT_MASTER_BYTE_TRANSMITTING));
-	I2C_SendData(I2C1, data); //send value to write
-	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_BYTE_TRANSMITTED));
-	I2C_GenerateSTOP(I2C1, ENABLE);//endTransmission*/
+	if(!i2cStart(Write)) return 0;
+//--------------------------------------- SEND FIFO_DATA ADDRESS ------------------------------------------------
+	if(!i2cSetAddr(MAX30100_REG_FIFO_DATA)) return 0;
 	
-}
-
-uint8_t oximeterRead(max30100Registers_t reg)
-{
-	uint8_t readuint8_t;
-	i2cRead(MAX30100_DEVICE,reg);
-	I2C_GenerateSTART(I2C1, ENABLE); //beginTransmission(MAX30100_DEVICE)
-	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_MODE_SELECT));
-
-	I2C_Send7bitAddress(I2C1, MAX30100_DEVICE, I2C_Direction_Transmitter);
-	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
-
-	I2C_SendData(I2C1, reg);
-	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
-
-	I2C_GenerateSTART(I2C1, ENABLE);
-	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_MODE_SELECT));
-	I2C_Send7bitAddress(I2C1, MAX30100_DEVICE, I2C_Direction_Receiver);
-	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
-	readuint8_t=I2C_ReceiveData(I2C1); //requestFrom(MAX30100_DEVICE)
-	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_BYTE_RECEIVED));//not sure if it is needed, need testing
-	
-	I2C_GenerateSTOP(I2C1, ENABLE);//endTransmission
-	return readuint8_t;
-}
-
-fifo_t oximeterReadFIFO() //read one sample
-{
-	fifo_t result;
-  uint8_t buffer[4];
-	int tmp;
-	while(!tmp) //wait for HR_RDY flag set
-	{
-		tmp=	i2cRead(MAX30100_DEVICE,MAX30100_INT_STATUS);
-		tmp&=HR_RDY;
+//------------------------------------------- REPEAT START ------------------------------------------------------	
+	if(!i2cStart(Read)) return 0;
+	I2C_AcknowledgeConfig(I2C1, ENABLE);
+	while (i<16){		
+		if(i!=15) FIFO[(fifoptr++)&0xFF] = I2CReadACK();
+		else FIFO[(fifoptr++)&0xFF] = I2CReadNACK();
+		i++;
 	}
-	/*uint8_t NUM_AVAILABLE_SAMPLES;
-	int writePointer, readPointer;
+	i2cStop();
 	
-	writePointer=oximeterRead(MAX30100_FIFO_WRITE);
-	readPointer=oximeterRead(MAX30100_FIFO_READ);
-	NUM_AVAILABLE_SAMPLES=writePointer-readPointer;*/
+//-------------------------------------------- STOP ------------------------------------------------- 
+//	I2C_AcknowledgeConfig(I2C1, DISABLE);
+//	I2C_GenerateSTOP(I2C1, ENABLE);
+//	while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT)){
+//		/* If the timeout delay is exeeded, exit with error code */
+//		if ((timeout--) == 0) return 0;
+//	} timeout = I2C_TIMEOUT_MAX;
 	
-  readFrom( MAX30100_FIFO_DATA, 4, buffer );
-  result.rawIR = (buffer[0] << 8) | buffer[1];
-  result.rawRed = (buffer[2] << 8) | buffer[3];
-
-  return result;
+	return 1;
 }
 
-// Reads num uint8_ts starting from address register on device in to _buff array
+
+/* Handle PD7 interrupt */
+void EXTI9_5_IRQHandler(void) {
+	static uint8_t MAX2=0, READ_PTR=0, WRITE_PTR=0, flag=0;
+	if (EXTI_GetITStatus(EXTI_Line7) != RESET) {		/* Make sure that interrupt flag is set */
+		MAX2= i2cReadByte(0x00);
+//		WRITE_PTR= ReadByte(0x02);
+    i2cStart(Write);
+		i2cWrite(0x02, 0x00 );
+		I2C_GenerateSTOP(I2C1, ENABLE);
+		i2cStart(Write);
+		i2cWrite(0x03, 0x00 );
+		I2C_GenerateSTOP(I2C1, ENABLE);
+		i2cStart(Write);
+		i2cWrite(0x04, 0x00 );
+		I2C_GenerateSTOP(I2C1, ENABLE);
+		
+		ReadFIFO();
+		
+		i2cStart(Write);
+		i2cWrite(0x04, 0x00);
+		I2C_GenerateSTOP(I2C1, ENABLE);
+//		READ_PTR= ReadByte(0x04);
+//			//MAX2= ReadByte(0x00);
+//    WRITE_PTR= ReadByte(0x02);
+	//	USART_SendData(USART3,FIFO[Sendptr++]);
+		
+    EXTI_ClearITPendingBit(EXTI_Line7);					/* Clear interrupt flag */
+	}
+
+}
+/*************************************************************************************
+ *														MODULE CONFIGURATION																	 *
+ *************************************************************************************/
+int ModuleConfig()
+	{
+	Mode mode = MAX30100_MODE_SPO2_HR;
+	LEDPulseWidth led = MAX30100_SPC_PW_1600US_16BITS ;
+	SamplingRate sp = MAX30100_SAMPRATE_200HZ;
+	LEDCurrent IRcurr = MAX30100_LED_CURR_20_8MA ;
+	LEDCurrent Redcurr = MAX30100_LED_CURR_20_8MA ;	
+	uint8_t mod, inter, spo,l;
+
+//----------------------------------------- SET MODE --------------------------------------------------------------	
+	if(!i2cStart(Write)) return 0;
+	if(!i2cWrite(MAX30100_REG_MODE_CONFIGURATION, mode)) return 0;	
+//------------------------------------- SET INTERRUPTION ----------------------------------------------------------	
+	if(!i2cStart(Write)) return 0;
+	if(!i2cWrite(MAX30100_REG_INTERRUPT_ENABLE, 0x80)) return 0;				// Enable FIFO full interruption
+//---------------- SET LEDS PULSE WIDTH, SAMPLING RATE AND SETTING THE HIGH RESOLUTION ----------------------------
+	if(!i2cStart(Write)) return 0;
+//	if(!write(MAX30100_REG_SPO2_CONFIGURATION, (led | (sp<<2) | MAX30100_SPC_SPO2_HI_RES_EN) ) ) return 0;	
+	if(!i2cWrite(MAX30100_REG_SPO2_CONFIGURATION, 0x4D )) return 0;	
+//-------------------------------------- SET LEDS CURRENT ---------------------------------------------------------
+	if(!i2cStart(Write)) return 0;
+	if(!i2cWrite(MAX30100_REG_LED_CONFIGURATION, (IRcurr | Redcurr<<4) ) ) return 0;	
+	
+	i2cStop();
+	
+	
+mod= i2cReadByte(MAX30100_REG_MODE_CONFIGURATION);
+inter= i2cReadByte(MAX30100_REG_INTERRUPT_ENABLE);
+spo= i2cReadByte(MAX30100_REG_SPO2_CONFIGURATION);
+l= i2cReadByte(MAX30100_REG_LED_CONFIGURATION);
+
+	
+	return 1;
+}
+/*************************************************************************************
+ *															  RESET MODULE   																		 *
+ *************************************************************************************/
+int ResetMAX()
+	{
+	if(!i2cStart(Write)) return 0;
+	if(!i2cWrite(MAX30100_REG_MODE_CONFIGURATION, MAX30100_MC_RESET)) return 0;	
+	I2C_GenerateSTOP(I2C1, ENABLE);
+	return 1;
+}
+
+
+/*
 void readFrom(max30100Registers_t reg, int num, uint8_t* _buff)
 {
 	int k;
@@ -208,7 +280,7 @@ void readFrom(max30100Registers_t reg, int num, uint8_t* _buff)
 
   I2C_GenerateSTOP(I2C1, ENABLE); // end transmission
 }
-
+*/
 /*int detectPulse(float sensor_value)
 {
   static float prev_sensor_value = 0;
@@ -292,31 +364,3 @@ void readFrom(max30100Registers_t reg, int num, uint8_t* _buff)
   prev_sensor_value = sensor_value;
   return 0;
 }*/
-
-void setLEDCurrents(uint8_t redLedCurrent, uint8_t IRLedCurrent)
-{
-  i2cWrite(MAX30100_DEVICE, MAX30100_LED_CONF, (redLedCurrent << 4) | IRLedCurrent );
-}
-
-void setInterrupt(uint8_t interrupt)
-{
-	i2cWrite(MAX30100_DEVICE,MAX30100_INT_ENABLE, 0x80|0x20); //enable ALMOST_FULL and HD_RDY interrupts
-}
-
-void setMode(Mode mode)
-{
-  uint8_t currentModeReg = i2cRead(MAX30100_DEVICE, MAX30100_MODE_CONF);
-  i2cWrite(MAX30100_DEVICE, MAX30100_MODE_CONF, (currentModeReg & 0xF8) | mode );
-}
-
-void setSamplingRate(SamplingRate rate)
-{
-  uint8_t currentSpO2Reg = i2cRead(MAX30100_DEVICE,  MAX30100_SPO2_CONF );
-  i2cWrite(MAX30100_DEVICE, MAX30100_SPO2_CONF, ( currentSpO2Reg & 0xE3 ) | (rate<<2) );
-}
-
-void setLEDPulseWidth(LEDPulseWidth pw)
-{
-  uint8_t currentSpO2Reg = i2cRead(MAX30100_DEVICE,  MAX30100_SPO2_CONF );
-  i2cWrite(MAX30100_DEVICE, MAX30100_SPO2_CONF, ( currentSpO2Reg & 0xFC ) | pw );
-}

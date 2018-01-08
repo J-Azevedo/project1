@@ -17,7 +17,7 @@ static	l3gd20Data data[100];
 	float x=0;
 	//acquire the data from the gyroscope
 	data[i]=gyroReadAxisValue();
-	//x=data[i].x;
+	x=data[i].x;
 	i++;
 	//send the data to the back of the queue, to be read in the processing task
 	xQueueSendToBack(xQGyroData,&x,(TickType_t)50);

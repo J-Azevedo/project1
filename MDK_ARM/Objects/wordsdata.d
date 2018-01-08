@@ -1,0 +1,10 @@
+.\objects\wordsdata.o: ..\src\WordsData.c
+.\objects\wordsdata.o: ..\inc\WordsRecognizer.h
+.\objects\wordsdata.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\arm_math.h
+.\objects\wordsdata.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\core_cm4.h
+.\objects\wordsdata.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\wordsdata.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_version.h
+.\objects\wordsdata.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_compiler.h
+.\objects\wordsdata.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.0\CMSIS\Include\cmsis_armcc.h
+.\objects\wordsdata.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\wordsdata.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h

@@ -1,7 +1,7 @@
 #ifndef __WORDS_DATA_H
 #define __WORDS_DATA_H
 
-#include "WordsRecognizer.h"
+#include "wordRecognizer.h"
 
 extern float word1_trasnpost_A[];
 

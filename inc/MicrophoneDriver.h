@@ -8,8 +8,8 @@
  Define to prevent recursive inclusion -------------------------------------*/
 
 
-#ifndef __MICROPHONEDRIVER_H__
-#define __MICROPHONEDRIVER_H__
+#ifndef __MICROPHONE_DRIVER
+#define __MICROPHONE_DRIVER
 #include <stdint.h>
 
 /*******************************************************************************
