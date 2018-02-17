@@ -1,10 +1,7 @@
 /**
   ******************************************************************************
   * @file    buzzerDriver.h
-  * @author  Joao Azevedo
-
-  * @brief   This file contains all the functions prototypes for the SPI 
-  *          firmware library. 
+  * @author  Joao Azevedo and Joao Reis
   ****************************************************************************** 
 
 

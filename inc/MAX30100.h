@@ -1,8 +1,7 @@
 /**
   ******************************************************************************
   * @file    MAX30100.h
-  * @author  Afonso Santos and Joao Azevedo
-  * @date    15-December-2017
+  * @author  Afonso Santos, Joao Azevedo and Joao Reis
   ******************************************************************************/
 
 #ifndef __MAX30100__

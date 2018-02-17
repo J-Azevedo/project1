@@ -3,20 +3,15 @@
 #include "stm32f4xx_spi.h"              // Keil::Device:StdPeriph Drivers:SPI
 #include "i2sModule.h"
 
-/******************************************************************************
-*								Private Headers
-*******************************************************************************/
 
 
 /*****************************************************************************
-*			Functions
+*		Public	Functions
 ******************************************************************************/
 
 void i2sInit(void)
 {
 	I2S_InitTypeDef I2S_InitStructure;
-	
-	
   /* Enable the SPI clock */
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,ENABLE);
   
@@ -34,5 +29,4 @@ void i2sInit(void)
 	RCC_I2SCLKConfig(RCC_I2S2CLKSource_PLLI2S);
 	RCC_PLLI2SCmd(ENABLE);
 	while(RCC_GetFlagStatus(RCC_FLAG_PLLI2SRDY)==RESET);
-
 }

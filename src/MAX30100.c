@@ -55,7 +55,7 @@ int write(uint8_t reg, uint8_t data);
 
 /* Handle PD7 interrupt */
 void EXTI9_5_IRQHandler(void) {
-	static uint8_t MAX2=0, flag=0;
+	static uint8_t MAX2=0;
 	if (EXTI_GetITStatus(EXTI_Line7) != RESET) {		/* Make sure that interrupt flag is set */
 		MAX2= ReadByte(0x00);
 		WRITE_PTR= ReadByte(0x02);
@@ -371,21 +371,21 @@ static void filterloop()
 		xv[5] = ir[i] / GAIN;
 		yv[0] = yv[1]; yv[1] = yv[2]; yv[2] = yv[3]; yv[3] = yv[4]; yv[4] = yv[5];
 		yv[5] = (xv[5] - xv[0]) + 5 * (xv[1] - xv[4]) + 10 * (xv[3] - xv[2])
-			+ (0.9033282853 * yv[0]) + (-4.6084763585 * yv[1])
-			+ (9.4053079892 * yv[2]) + (-9.5984970908 * yv[3])
-			+ (4.8983371457 * yv[4]);
+			+ (((float)0.9033282853) * yv[0]) + (((float)-4.6084763585) * yv[1])
+			+ (((float)9.4053079892) * yv[2]) + (((float)-9.5984970908) * yv[3])
+			+ (((float)4.8983371457) * yv[4]);
 		outputIR[i] = yv[5];
 	}
 //red highpass filter
 	for (int i = 0; i<4096; i++)
 	{
 		xv[0] = xv[1]; xv[1] = xv[2]; xv[2] = xv[3]; xv[3] = xv[4]; xv[4] = xv[5];
-		xv[5] = ir[i] / GAIN;
+		xv[5] = (float)(ir[i] /(float) GAIN);
 		yv[0] = yv[1]; yv[1] = yv[2]; yv[2] = yv[3]; yv[3] = yv[4]; yv[4] = yv[5];
 		yv[5] = (xv[5] - xv[0]) + 5 * (xv[1] - xv[4]) + 10 * (xv[3] - xv[2])
-			+ (0.9033282853 * yv[0]) + (-4.6084763585 * yv[1])
-			+ (9.4053079892 * yv[2]) + (-9.5984970908 * yv[3])
-			+ (4.8983371457 * yv[4]);
+			+ (((float)0.9033282853) * yv[0]) + (((float)-4.6084763585) * yv[1])
+			+ (((float)9.4053079892) * yv[2]) + (((float)-9.5984970908) * yv[3])
+			+ (((float)4.8983371457) * yv[4]);
 		outputRED[i] = yv[5];
 	}
 }
@@ -402,16 +402,16 @@ static void filterloop2()
 	{
 		xv2[0] = xv2[1]; xv2[1] = xv2[2]; xv2[2] = xv2[3]; xv2[3] = xv2[4]; xv2[4] = xv2[5]; xv2[5] = xv2[6]; xv2[6] 
 		= xv2[7]; xv2[7] = xv2[8]; xv2[8] = xv2[9]; xv2[9] = xv2[10];
-		xv2[10] = outputIR[i] / GAINLOW;
+		xv2[10] = (float)(outputIR[i] / (float)GAINLOW);
 		yv2[0] = yv2[1]; yv2[1] = yv2[2]; yv2[2] = yv2[3]; yv2[3] = yv2[4]; yv2[4] = yv2[5]; yv2[5] = yv2[6];
 		yv2[6] = yv2[7]; yv2[7] = yv2[8]; yv2[8] = yv2[9]; yv2[9] = yv2[10];
 		yv2[10] = (xv2[0] + xv2[10]) + 10 * (xv2[1] + xv2[9]) + 45 * (xv2[2] + xv2[8])
 			+ 120 * (xv2[3] + xv2[7]) + 210 * (xv2[4] + xv2[6]) + 252 * xv2[5]
-			+ (-0.0164796305 * yv2[0]) + (0.2309193459 * yv2[1])
-			+ (-1.4737279370 * yv2[2]) + (5.6470743441 * yv2[3])
-			+ (-14.4056874260 * yv2[4]) + (25.6017495970 * yv2[5])
-			+ (-32.1597564880 * yv2[6]) + (28.2587879000 * yv2[7])
-			+ (-16.6721933230 * yv2[8]) + (5.9875896298 * yv2[9]);
+			+ (((float)-0.0164796305) * yv2[0]) + (((float)0.2309193459) * yv2[1])
+			+ (((float)-1.4737279370) * yv2[2]) + (((float)5.6470743441) * yv2[3])
+			+ (((float)-14.4056874260) * yv2[4]) + (((float)25.6017495970) * yv2[5])
+			+ (((float)-32.1597564880) * yv2[6]) + (((float)28.2587879000) * yv2[7])
+			+ (((float)-16.6721933230) * yv2[8]) + (((float)5.9875896298) * yv2[9]);
 		outputIR2[i] = yv2[10];
 	}
 }

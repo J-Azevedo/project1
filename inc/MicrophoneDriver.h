@@ -1,9 +1,7 @@
 /**
   ******************************************************************************
   * @file    MicrophoneDriver.h
-  * @author  Joao Reis
-  * @brief   This file contains the prototypes for the initialization of the 
-							microphone and also the start and stop of the recording
+	* @author  Joao Azevedo and Joao Reis
   ****************************************************************************** 
  Define to prevent recursive inclusion -------------------------------------*/
 
@@ -33,8 +31,8 @@ extern float recordData[BUFFER_MIC_SIZE];
 * 														Public Function Headers 												  *
 ********************************************************************************/
 
-void microphoneInit(void);//, uint32_t, uint32_t);
+void microphoneInit(void);
 void microphoneStop(void);
-void microphoneStart(void);//uint16_t*, uint32_t);
+void microphoneStart(void);
 
 #endif //__MICROPHONE_DRIVER

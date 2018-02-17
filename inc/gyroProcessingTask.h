@@ -1,10 +1,7 @@
 /**
   ******************************************************************************
-  * @file    gyroAcquisitionTask.h
-  * @author  Joao Azevedo
-  * @date    15-December-2017
-  * @brief   This file contains all the functions prototypes for the gyroscope 
-	(L3GD20) driver.
+  * @file    gyroProcessingTask.h
+  * @author  Joao Azevedo and Joao Reis
   ******************************************************************************/
 
 /* Define to prevent recursive inclusion -------------------------------------*/

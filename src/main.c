@@ -3,8 +3,7 @@
 #include <task.h>
 #include <queue.h>
 #include <semphr.h>
-
-
+#include <task.h>
 /*stm libraries*/
 
 /*Project includes*/
@@ -12,24 +11,27 @@
 #include "RFM69registers.h"
 #include "spiModule.h"
 #include "buzzerDriver.h"
+#include "MAX30100.h"
 #include "pushButtonDriver.h"
 #include "gyroscopeDriver.h"
-#include "MAX30100.h"
+#include "microphoneDriver.h"
 #include "stm32f4_discovery.h"
 #include "wordData.h"
+#include "i2cModule.h"
+
 /*Task includes*/
 #include "microphoneAcquisitionTask.h"
 #include "microphoneProcessingTask.h"
 #include "gyroAcquisitionTask.h"
 #include "gyroProcessingTask.h"
 #include "rfTransmissionTask.h"
+#include "oximeterAcquisitionTask.h"
 /* Library includes. */
 #include <stm32f4xx.h>
 
 #ifndef ARM_MATH_CM4
 #define ARM_MATH_CM4
 #endif
-
 
 void prvSetupLed(void);
 
@@ -42,6 +44,8 @@ xTaskHandle xTskMicrophoneAcquisition;
 xTaskHandle xTskMicrophoneProcessing;
 xTaskHandle xTskPBAcquisition;
 xTaskHandle xTskRfTransmission;
+xTaskHandle xTskOximiterAcquition;
+
 
 /*************************************
 *queue declaration
@@ -49,17 +53,19 @@ xTaskHandle xTskRfTransmission;
 xQueueHandle xQGyroData;
 xQueueHandle xTransmissionData;
 
-//EventGroupHandle_t xAckStatusFlags;
-
 /*************************************
 *semaphore declaration
 *************************************/
+//xSemaphoreHandle xSemGyroDataProcessing;
 xSemaphoreHandle xSemMicrophoneStart;
+xSemaphoreHandle xSemGyroAcquisitionFinish;
+xSemaphoreHandle xSemGyroProcessingFinish;
 xSemaphoreHandle xSemMicRecordingFinish;
-xSemaphoreHandle xSemMicProcessingFinish;
 xSemaphoreHandle xSemPBFinish; 
+xSemaphoreHandle xSemTransmitFinish; 
 xSemaphoreHandle xSemOximeterAcquisitionFinish;
-
+ xSemaphoreHandle xSemAckReceived;
+xSemaphoreHandle xSemOximeterAcquisitionFinish;
 
 /*************************************
 *queue initialization
@@ -73,13 +79,13 @@ int queueInitialization()
 	{
 		return 1;
 	}
-	xTransmissionData=xQueueCreate(20,sizeof(rfMessage));
+	xTransmissionData=xQueueCreate(1,sizeof(rfMessage));//xTransmissionData=xQueueCreate(20,sizeof(rfMessage));
 	if(xTransmissionData==NULL)
 	{
 		return 1;
 	}
-return 0;
 
+return 0;
 }
 
 
@@ -88,13 +94,6 @@ return 0;
 *************************************/
 int semaphoreInitialization()
 {
-
- 
-	vSemaphoreCreateBinary(xSemMicrophoneStart);
-	if(xSemMicrophoneStart==NULL)
-	{
-		return 1;
-	}
 	vSemaphoreCreateBinary(xSemMicrophoneStart);
 	if(xSemMicrophoneStart==NULL)
 	{
@@ -106,59 +105,55 @@ int semaphoreInitialization()
 	{
 		return 1;
 	}
- 
-	vSemaphoreCreateBinary(xSemMicProcessingFinish);
-	if(xSemMicProcessingFinish==NULL)
-	{
-		return 1;
-	}
 	
 	vSemaphoreCreateBinary(xSemPBFinish);
 	if(xSemPBFinish==NULL)
 	{
 		return 1;
 	}
+	
+	vSemaphoreCreateBinary(xSemTransmitFinish);
+	if(xSemTransmitFinish==NULL)
+	{
+		return 1;
+	}
 
-	vSemaphoreCreateBinary(xSemOximeterAcquisitionFinish)
+	vSemaphoreCreateBinary(xSemGyroAcquisitionFinish);
+	if(xSemTransmitFinish==NULL)
+	{
+		return 1;
+	}
+	
+	vSemaphoreCreateBinary(xSemGyroProcessingFinish);
+	if(xSemTransmitFinish==NULL)
+	{
+		return 1;
+	}
+	
+	vSemaphoreCreateBinary(xSemOximeterAcquisitionFinish);
 	if(xSemOximeterAcquisitionFinish==NULL)
 	{
 		return 1;
 	}
+	
 	/* Semaphores must be taken in the beginning to reset the counter */
 	xSemaphoreTake( xSemMicrophoneStart, portMAX_DELAY);
 	xSemaphoreTake( xSemMicRecordingFinish, portMAX_DELAY);
-	xSemaphoreTake( xSemMicProcessingFinish, portMAX_DELAY);
-	xSemaphoreTake( xSemPBFinish, portMAX_DELAY);
-	xSemaphoreTake(	xSemOximeterAcquisitionFinish,portMAX_DELAY);
-	
-return 0;
+	xSemaphoreTake( xSemPBFinish, portMAX_DELAY); //do not take to pass at first on gyroacquisitiontask
+	xSemaphoreTake( xSemTransmitFinish, portMAX_DELAY);
+	xSemaphoreTake( xSemGyroAcquisitionFinish, portMAX_DELAY);
+	xSemaphoreTake( xSemGyroProcessingFinish, portMAX_DELAY);
+	xSemaphoreTake( xSemOximeterAcquisitionFinish, portMAX_DELAY);
+	return 0;
 }
 
 
-void vLEDTask( void *pvParameters )
-{
-	prvSetupLed();
-/* TickType_t xLastWakeTime;
- const TickType_t xFrequency = 10;*/
-
-     // Initialise the xLastWakeTime variable with the current time.
-    // xLastWakeTime = xTaskGetTickCount();
-	for( ;; )
-	{
-		/* Toogle the LED bit */
-		GPIO_ToggleBits(GPIOD, GPIO_Pin_15);
-		vTaskDelay(1000 / portTICK_RATE_MS);	
-//		  vTaskDelayUntil( &xLastWakeTime, xFrequency );
-	}
-}
 
 void vGyroAcquisitionTask( void *pvParameters )
 {
-	//gyroStart();
 	for( ;; )
 	{
 		gyroAcquisitionTask();
-
 	}
 }
 
@@ -167,34 +162,20 @@ void vGyroProcessingtTask( void *pvParameters)
 	for( ;; )
 	{
 		gyroProcessingTask();
-
 	}
-
 }
+
 void vRfTransmissionTask(void *pvParameters)
 {
-	for( ;; )
+		for( ;; )
 	{
 		rfTransmissionTask();
 
 	}
 }
-//void voximeterAcquisitionTask(void *pvParameters)
-//{
-//	TickType_t xLastWakeTime;
-//	const TickType_t xFrequency = 120000/portTICK_RATE_MS;
-
-//  // Initialise the xLastWakeTime variable with the current time.
-//  xLastWakeTime = xTaskGetTickCount();
-//	for( ;; )
-//	{
-//		void oximeterAcquisitionTask(TickType_t);
-//	}
-//}
 
 void vMicrophoneAcquisitionTask(void *pvParameters)
 {
-	//xTaskToNotify = xTaskGetCurrentTaskHandle();
 		for( ;; )
 	{
 		microphoneAcquisitionTask();
@@ -211,93 +192,72 @@ void vMicrophoneProcessingTask(void *pvParameters)
 
 void vPBAcquisitionTask(void *pvParameters)
 {
-	xSemaphoreTake(xSemMicProcessingFinish, portMAX_DELAY);
-	pushButtonInit(); //enables external interrupt
 		for( ;; )
 	{
-			
+		xSemaphoreTake(xSemTransmitFinish, portMAX_DELAY);
+		pushButtonInit(); //enables external interrupt
+		xSemaphoreTake( xSemPBFinish, portMAX_DELAY );
+		vTaskResume(xTskGyroAcquisition);
+	}
+}
+void vOximeterAcquisitionTask(void *pvParameters)
+{
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = 120000/portTICK_RATE_MS;
+
+  // Initialise the xLastWakeTime variable with the current time.
+  xLastWakeTime = xTaskGetTickCount();
+	for( ;; )
+	{
+		 oximeterAcquisitionTask(xLastWakeTime,xFrequency);
 	}
 }
 
 
-
-
-void startup()
-{
-
-transceiverInit();
-}
-
 int main()
-{
+{	
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4); //needs to be applied before any NVIC initialization
 	
 	portBASE_TYPE task1_pass;
 	portBASE_TYPE task2_pass;
 	portBASE_TYPE task3_pass;
-int i=0;
-	i++;
+	portBASE_TYPE task4_pass;
+	portBASE_TYPE task5_pass;
+	portBASE_TYPE task6_pass;
+	portBASE_TYPE task7_pass;
 
-	//i2c_init();											//done
-/*	rfMessage Data;
-	Data.priority=1;
-	Data.type='P';*/
-//	//ResetMAX();
-	//EXTI_PD7();
-//	gyroStart();
-	//transceiverInit();
-	startup();
+/*				PERIPHERAL INITIALIZATION 			*/
+	STM_EVAL_LEDInit(LED3);
+	STM_EVAL_LEDInit(LED4);
+	STM_EVAL_LEDInit(LED5);
+	STM_EVAL_LEDInit(LED6);
+	
+	microphoneInit();
+	buzzerInit();
+	gyroStart();
+	i2cInit();
+	transceiverInit();
+	semaphoreInitialization();
 	queueInitialization();
-		semaphoreInitialization();
-	//queueInitialization();
+	
 	/* Create Task */
-//	task1_pass = xTaskCreate( vGyroAcquisitionTask, "Gyro_Acquisition_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroAcquisition );
-	//task2_pass = xTaskCreate( vGyroProcessingtTask, "Gyro_Processing_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroProcessing );
-	//task3_pass= xTaskCreate(vRfTransmissionTask,"RF_Transmission_Task",configMINIMAL_STACK_SIZE, NULL, 1,xTskRfTransmission);
-task1_pass = xTaskCreate( vRfTransmissionTask, "RF_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskRfTransmission );
-	if( task1_pass == pdPASS )
+	task1_pass = xTaskCreate( vMicrophoneAcquisitionTask, "Microphone_Acquisition_task", configMINIMAL_STACK_SIZE, NULL, 2, &xTskMicrophoneAcquisition );
+	task2_pass = xTaskCreate( vMicrophoneProcessingTask, "Microphone_Processing_task", 500, NULL, 2, &xTskMicrophoneProcessing );
+	task3_pass = xTaskCreate( vPBAcquisitionTask, "PB_Acquisition_task", configMINIMAL_STACK_SIZE, NULL, 1, &xTskPBAcquisition );
+	task4_pass = xTaskCreate( vRfTransmissionTask,"RF_Transmission_Task",configMINIMAL_STACK_SIZE, NULL, 5, &xTskRfTransmission );
+	task5_pass = xTaskCreate( vGyroAcquisitionTask, "Gyro_Acquisition_task", configMINIMAL_STACK_SIZE, NULL, 3, &xTskGyroAcquisition );
+	task6_pass = xTaskCreate( vGyroProcessingtTask, "Gyro_Processing_task", configMINIMAL_STACK_SIZE, NULL, 3, &xTskGyroProcessing );
+	task7_pass = xTaskCreate(	vOximeterAcquisitionTask,"Oximiter_Acquitision_task",configMINIMAL_STACK_SIZE,NULL,4,&xTskOximiterAcquition);
+	if( task1_pass == pdPASS && task2_pass == pdPASS && task3_pass == pdPASS && task4_pass == pdPASS && task5_pass == pdPASS && task6_pass == pdPASS &&	task7_pass==pdPASS )
 	{
 			/* Start the Scheduler */ 
 			vTaskStartScheduler(); 
-
 	}
 	else
 	{
 			/* ERROR! Creating the Tasks */
 			return -2;
 	}
-//		xQueueSend(xTransmissionData,&Data,portMAX_DELAY);
-//	short int data[10]={0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21};
-
-//	transceiverInit();
-//	transmitData(&data);
-	
-	//while(i!=0x24)
-//	i=readReg(0x0C);
-	/*
-	while(i!=( RF_DATAMODUL_DATAMODE_PACKET | RF_DATAMODUL_MODULATIONTYPE_FSK | RF_DATAMODUL_MODULATIONSHAPING_00))
-	i=readReg(REG_OPMODE);*/
-/*	buzzerInit();
-	buzzerStart();*/
-//	pushButtonInit();
-	
-while(1);
-//	return 0;
+	return 0;
 }
 
-
-void prvSetupLed(void)
-{
-	// GPIO structure declaration
-	GPIO_InitTypeDef GPIO_InitStruct;
-	// Enabling GPIO peripheral clock
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
-	// GPIO peripheral properties specification
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_15; // LED3 GPIO pin
-//	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF; // alternate function
-	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz; // clock speed
-	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP; // push/pull 
-	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL; // pullup/pulldown resistors inactive
-	// Setting GPIO peripheral corresponding bits
-	GPIO_Init(GPIOD, &GPIO_InitStruct);
-}

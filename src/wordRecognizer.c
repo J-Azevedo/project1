@@ -120,10 +120,6 @@ static void WordFindPeaks(Words* words, float* single_sided, unsigned int* peak_
 
 static void WordExtractFeaturesFrame(Words* words, float* audio_frame, float32_t* frame_frequencies){
 	unsigned int i, j;
-	//float x_debug[128];
-	//float32_t frame_frequencies_debug[6];
-	//float peak_locations_debug[6];
-	//float f_debug[65];
 	unsigned int size = words->NFFT/2+1;
 	float step = words->sample_rate/2.0/(words->NFFT/2.0);
 	

@@ -6,16 +6,11 @@
 #include <queue.h>
 #include <semphr.h>
 #include "main.h"
+#include "rfTransmissionTask.h"
 
 extern 	max30100Data lastAcquiredData;//variable that stores the last data that was acquired
 extern xSemaphoreHandle xSemOximeterAcquisitionFinish;
 extern xQueueHandle xTransmissionData;
-
-typedef struct rfMessage_t
-{
-  char type;
-	char priority;
-} rfMessage;
 
 
 void oximeterAcquisitionTask(TickType_t xLastWakeTime,TickType_t xFrequency)

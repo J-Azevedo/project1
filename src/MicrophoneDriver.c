@@ -1,6 +1,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include <FreeRTOS.h>
 #include "i2sModule.h"
+#include "dmaModule.h"
 #include "microphoneDriver.h"
 #include "pdm_filter.h"
 #include <task.h>
@@ -9,111 +10,23 @@
 #include "stm32f4_discovery.h"
 #include <semphr.h>
 
-extern xSemaphoreHandle xSemMicRecordingFinish; 
-extern TaskHandle_t xTaskToNotify;
 
 /******************************************************************************
 *								Public Variables
 *******************************************************************************/
 
 float recordData[BUFFER_MIC_SIZE];
-
-
-/******************************************************************************
-*								Private Variables
-*******************************************************************************/
-
-volatile static unsigned short int record_buffer0[INTERNAL_BUFF_SIZE];/* PDM input; the application must pass to the function
-the pointer to the first input sample of the microphone that must be processed.*/
-volatile static unsigned short int record_buffer1[INTERNAL_BUFF_SIZE];
-static unsigned short int memory_buffer0[PCM_OUT_SIZE];/* PCM output. The application
-must pass to the function the pointer to the first sample of the channel to be obtained. */
-static unsigned short int memory_buffer1[PCM_OUT_SIZE];
-static PDMFilter_InitStruct filter;
-
+PDMFilter_InitStruct filter;
 
 /******************************************************************************
 *								Private Headers
 *******************************************************************************/
 
-static void dmaInit(void);
 static void microphoneGPIOInit(void);
-static void dmaBufferSwap(short int*);
 
 /*****************************************************************************
 *			Private Functions
 ******************************************************************************/
-static void dmaInit(void)
-{
-	NVIC_InitTypeDef NVIC_InitStruct;
-	DMA_InitTypeDef DMA_InitStruct;
-	
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
-	
-	/* Configure the DMA Stream */
-  DMA_Cmd(DMA1_Stream3, DISABLE);
-  DMA_DeInit(DMA1_Stream3);
-  /* Set the parameters to be configured */
-  DMA_InitStruct.DMA_Channel = DMA_Channel_0;  
-  DMA_InitStruct.DMA_PeripheralBaseAddr = 0x4000380C; //I2S address
-  DMA_InitStruct.DMA_Memory0BaseAddr = (unsigned int)record_buffer0; //pdm input address
-  DMA_InitStruct.DMA_DIR = DMA_DIR_PeripheralToMemory;
-  DMA_InitStruct.DMA_BufferSize = 64;
-  DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-  DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;
-  DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-  DMA_InitStruct.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-	DMA_InitStruct.DMA_Mode = DMA_Mode_Circular;
-  DMA_InitStruct.DMA_Priority = DMA_Priority_VeryHigh;
-  DMA_InitStruct.DMA_FIFOMode = DMA_FIFOMode_Disable;
-	DMA_InitStruct.DMA_FIFOThreshold = DMA_FIFOThreshold_1QuarterFull;
-  DMA_InitStruct.DMA_MemoryBurst = DMA_MemoryBurst_Single;
-  DMA_InitStruct.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
-	DMA_Init(DMA1_Stream3, &DMA_InitStruct);
-	DMA_DoubleBufferModeConfig(DMA1_Stream3, (unsigned int)record_buffer1, DMA_Memory_0);
-	DMA_DoubleBufferModeCmd(DMA1_Stream3, ENABLE);
-  /* Enable DMA Stream Transfer Complete interrupt */  
-	DMA_ITConfig(DMA1_Stream3, DMA_IT_TC, ENABLE);
-	
-  /* I2S DMA IRQ Channel configuration */
-  NVIC_InitStruct.NVIC_IRQChannel = DMA1_Stream3_IRQn;
-  NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 14;
-  //NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStruct);
-
-  /* Enable the I2S DMA request */
-  SPI_I2S_DMACmd(SPI2, SPI_I2S_DMAReq_Rx, ENABLE);	
-}
-
-static void dmaBufferSwap(short int* buffer)
-{
-	static int j = 0;
-	unsigned int i;
-	static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
-	
-	for(i = 0; i < 16; i=i+2)
-		recordData[j++] = buffer[i]/ 32768.0; //PCM output copied to global variable recordData
-	
-	if(j == BUFFER_MIC_SIZE)
-	{
-		microphoneStop();
-		j = 0;
-		
-		xSemaphoreGiveFromISR(xSemMicRecordingFinish, &xHigherPriorityTaskWoken);
-		//configASSERT( xTaskToNotify != NULL );
-//		vTaskNotifyGiveFromISR( xTaskToNotify, &xHigherPriorityTaskWoken );
-//		xTaskToNotify = NULL;
-		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-		
-//		if(xHigherPriorityTaskWoken == pdTRUE) //xHigherPriorityTaskWoken == pdTRUE if giving the semaphore caused a task to unblock, and the unblocked task has a priority higher than the currently running task.
-//			portYIELD_FROM_ISR(xHigherPriorityTaskWoken); //If xHigherPriorityTaskWoken == pdTRUE then a context switch should be requested 
-		
-		portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
-
-	}
-}
-
 static void microphoneGPIOInit(void)
 {  
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -137,40 +50,10 @@ static void microphoneGPIOInit(void)
   GPIO_PinAFConfig(GPIOC, GPIO_PinSource3, GPIO_AF_SPI2);
 }
 
-/*DMA Interruption - cpu receives an interrupt from the DMA controller when transfer operation is done (TC=0)*/
-void DMA1_Stream3_IRQHandler(void)
-{
-	unsigned int i;
-	// Transfer complete from micrphone to DMA interrupt, in 1st iteration buffer0 fills, buffer1 has nothing to process
-	//2nd iteration buffer0 sends data to process, buffer 1 fills
-  if(DMA_GetITStatus(DMA1_Stream3, DMA_IT_TCIF3) != RESET) //DMA_GetFlagStatus(DMA1_Stream3, DMA_FLAG_TCIF3)
-	{
-		DMA_ClearITPendingBit(DMA1_Stream3, DMA_IT_TCIF3); //DMA_ClearFlag(DMA1_Stream3, DMA_FLAG_TCIF3);
-		if(DMA_GetCurrentMemoryTarget(DMA1_Stream3))
-		{
-			for(i = 0; i < 64; i++)
-				record_buffer0[i] = HTONS(record_buffer0[i]); //turn into big endian format
-			PDM_Filter_64_LSB((uint8_t *)record_buffer0, (uint16_t *)memory_buffer0, VOLUME, &filter); /*process a millisecond of PDM data from a single microphone.
-			They return a number of PCM samples equal to the frequency defined in the filter initialization (rate), divided by 1000.*/
-			//64 refers to decimation factor, LSB refers to representation of record_buffer0, returns 16 samples
-			dmaBufferSwap((short int*)memory_buffer0);
-		}
-		else
-		{
-			for(i = 0; i < 64; i++)
-				record_buffer1[i] = HTONS(record_buffer1[i]);
-			PDM_Filter_64_LSB((uint8_t *)record_buffer1, (uint16_t *)memory_buffer1, VOLUME, &filter); //convert pdm to pcm
-			dmaBufferSwap((short int*)memory_buffer1);
-		}
-	}
-}
-
-
 /*****************************************************************************
 *			Public Functions
 ******************************************************************************/
-
-void microphoneInit()//, uint32_t BitRes, uint32_t ChnlNbr)
+void microphoneInit()
 {	
 	/*Before calling the PDM_Filter_Init() function, the application code must enable the clock of
 	the STM32 microcontroller CRC peripheral (configuration done in RCC register)*/
@@ -196,7 +79,7 @@ void microphoneInit()//, uint32_t BitRes, uint32_t ChnlNbr)
 	dmaInit();
 }
 
-void microphoneStart()//uint16_t* pbuf, uint32_t size)
+void microphoneStart()
 {
 	STM_EVAL_LEDOn(LED3);
 	

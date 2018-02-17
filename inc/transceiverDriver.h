@@ -1,10 +1,7 @@
 /**
   ******************************************************************************
   * @file    transceiverDriver.h
-  * @author  Joao Azevedo
-
-  * @brief   This file contains all the functions prototypes for the SPI 
-  *          firmware library. 
+  * @author  Joao Azevedo and Joao Reis
   ****************************************************************************** 
 
 
@@ -50,7 +47,7 @@
 
 void transceiverInit(void);
 void changeMode(int newMode);
-void transmitData(const void *transferBuffer);
+void transmitData(const char *transferBuffer);
 
  int  readReg(int addr);
 

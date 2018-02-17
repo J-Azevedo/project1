@@ -130,8 +130,10 @@ float nearestNeighbour2[99][11] =//k=3
 };
 
 
-extern xSemaphoreHandle xSemMicrophoneStart;
+extern xSemaphoreHandle xSemGyroProcessingFinish;
+
 extern xQueueHandle xQGyroData;
+//static l3gd20Data lastcaptures[20];
 extern xTaskHandle xTskGyroAcquisition;
 
 
@@ -158,9 +160,7 @@ with k=3
 */
 static int dataProcessement()
 {
-	
 	int probability = 0;
-
 	struct auxiliarData minimum;
 	float aux;
 	int i=0;
@@ -175,11 +175,9 @@ static int dataProcessement()
 			//and get the smallest distance between both, that should give us the nearest neighbour
 			if (aux < minimum.distance)
 			{
-				
 				minimum.distance = aux;
 				minimum.position = j;
 			}
-
 		}
 		/*
 		if the distance between the acquired data and the nearest neighbour, is smaller than the
@@ -189,10 +187,9 @@ static int dataProcessement()
 		if (nearestNeighbour2[i][minimum.position] > minimum.distance)
 			probability++;
 			i++;
-
 	}
-//if the value probabilty is higher than 75 we acept the acquired data has part of the class, which means it positive input
-	if (probability > 75)
+//if the value probabilty is higher than 80 we acept the acquired data has part of the class, which means it positive input
+	if (probability > 80)
 		return 0;
 	else
 	{
@@ -225,7 +222,7 @@ void gyroProcessingTask()
 	 if (newdata== NULL)
 	 {
 			k++;
-        return;
+     return;
 	 }
 	 xQueueReceive(xQGyroData,&newdata->f,portMAX_DELAY);
 	 
@@ -233,6 +230,7 @@ void gyroProcessingTask()
 	 {
 			lastValue->nextValue=newdata;
 			lastValue=newdata;
+			lastValue->nextValue=NULL;
 			
 			auxiliarPointer=firstValue->nextValue;
 			vPortFree(firstValue);
@@ -244,13 +242,13 @@ void gyroProcessingTask()
 			 listCleanup();
 			 	//semaphore to sinalize correct movement
 			 //and to initialize the microphone recording
-			 xSemaphoreTake(xSemMicrophoneStart,portMAX_DELAY);
+			 xSemaphoreGive( xSemGyroProcessingFinish );
+			 i=0;
 			 /*
 			 we now have to suspend the acquisition task it should remain suspend, until either the 
 			if the call was sucssefuly resolved or if the voice input of the microphone isn't one of the key words 
 			 we only suspend the acquisition task because the processing tasks will be automaticly suspended by the queue*/
 			vTaskSuspend(xTskGyroAcquisition);	 
-
 		 }
 	 }
 	else
@@ -273,7 +271,7 @@ void gyroProcessingTask()
 					 listCleanup();
 						//semaphore to sinalize correct movement
 					 //and to initialize the microphone recording
-					 xSemaphoreTake(xSemMicrophoneStart,portMAX_DELAY);
+					 xSemaphoreGive( xSemGyroProcessingFinish );
 					 /*
 					 we now have to suspend the acquisition task it should remain suspend, until either the 
 					if the call was sucssefuly resolved or if the voice input of the microphone isn't one of the key words 
@@ -282,7 +280,8 @@ void gyroProcessingTask()
 					i=0;
 					}
 			}
-		 }
+		}
 	}
+	
 }
 

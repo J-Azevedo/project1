@@ -4,6 +4,11 @@
 #include "RFM69registers.h"
 #include "stm32f4xx_exti.h"             // Keil::Device:StdPeriph Drivers:EXTI
 #include "string.h"
+#include <FreeRTOS.h>
+#include <task.h>
+#include <queue.h>
+#include <semphr.h>
+#include <task.h>
 
 //#include "startup_stm32f40_41xxx.s"
 
@@ -29,32 +34,28 @@
    static volatile uint8_t _mode=0; //current mode
 	 static const int serverNode=3;
 	 static int ackReceived=0;
+	 extern xSemaphoreHandle xSemAckReceived;
 	typedef enum {NOTRECEIVED = 0, RECEIVED = 1} ackState;
 /******************************************************************************
 *								Private Headers
 *******************************************************************************/
 
-static void sgpioInit(void);
-	void r_gpioInit();
-static void r_writeReg(uint8_t addr, uint8_t value);
- //uint8_t  readReg(uint8_t addr);
-static void sendFrame(const void *buffer);
-static void timInit(void);
+	static void sgpioInit(void);
+	static void r_gpioInit(void);
+ 	static void sendFrame(const char *buffer);
 	short int r_spiTransmit(short int data);
- short int message[10];
+	short int message[10];
 
 /*****************************************************************************
 *			Private Functions
 ******************************************************************************/
+	
 void r_spiInit()
 {
 	r_gpioInit();
-	
 	SPI_InitTypeDef SPI_InitStruct;
 	SPI_StructInit(&SPI_InitStruct);
-
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI3, ENABLE); //enable peripheral clock
-
 	/* Initialize the SPI_Direction member */
   SPI_InitStruct.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
   /* initialize the SPI_Mode member */
@@ -74,18 +75,9 @@ void r_spiInit()
   SPI_InitStruct.SPI_FirstBit = SPI_FirstBit_MSB;
   /* Initialize the SPI_CRCPolynomial member */
   SPI_InitStruct.SPI_CRCPolynomial = 7;
-	
-	SPI_Init(SPI3, &SPI_InitStruct); //this function applies the configurations made above
-
-	/**
-  * @brief  Enables or disables the specified SPI peripheral.
-  * @param  SPIx: where x can be 1, 2, 3, 4, 5 or 6 to select the SPI peripheral.
-  * @param  NewState: new state of the SPIx peripheral. 
-  *          This parameter can be: ENABLE or DISABLE.
-  * @retval None
-  */
+		SPI_Init(SPI3, &SPI_InitStruct); //this function applies the configurations made above
+	/* @brief  Enables  the specified SPI peripheral.*/
 	SPI_Cmd(SPI3, ENABLE);
-	
 }
 
 void r_gpioInit()
@@ -105,7 +97,6 @@ void r_gpioInit()
 	
 	GPIO_Init(GPIOC, &GPIO_InitStruct);
 	
-	
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource10, GPIO_AF_SPI3); //SCK
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource11, GPIO_AF_SPI3); //MISO
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource12, GPIO_AF_SPI3); //MOSI
@@ -117,29 +108,18 @@ void r_gpioInit()
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL; // pullup/pulldown resistors inactive	
   GPIO_InitStruct.GPIO_Pin =  GPIO_Pin_8; 
   GPIO_Init(GPIOA, &GPIO_InitStruct);
-GPIO_SetBits(GPIOA, GPIO_Pin_8); //put NSS pin to HIGH
-
-
-
+	GPIO_SetBits(GPIOA, GPIO_Pin_8); //put NSS pin to HIGH
 }
 	
 static void sgpioInit(void)
-{//PD11
-	
+{//PD10
 	GPIO_InitTypeDef GPIO_InitStruct;
 	EXTI_InitTypeDef EXTI_InitStruct;
   NVIC_InitTypeDef NVIC_InitStruct;
-
-	
-
   /* Enable clock for GPIOD */
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
   /* Enable clock for SYSCFG */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-
-
-
-	
 	//interrupt pin configuration
 	 /* Set pin as input */
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
@@ -148,39 +128,24 @@ static void sgpioInit(void)
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_Init(GPIOD, &GPIO_InitStruct);
-    
-	/* Tell system that you will use PD11 for EXTI_Line0 */
-	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource10);
-    
-	/* PD11 is connected to EXTI_Line0 */
-	EXTI_InitStruct.EXTI_Line = EXTI_Line10;
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource10);	// Tell system that you will use PD10 for EXTI_Line10 
+	EXTI_InitStruct.EXTI_Line = EXTI_Line10;	// PD10 is connected to EXTI_Line10 
 	/* Enable interrupt */
 	EXTI_InitStruct.EXTI_LineCmd = ENABLE;
 	/* Interrupt mode */
 	EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt;
-	/* Triggers on rising and falling edge */
-	//EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
-	EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Rising;
-	/* Add to EXTI */
-	EXTI_Init(&EXTI_InitStruct);
-			EXTI_ClearITPendingBit(EXTI_Line10);
- 
+	EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Rising;// Triggers on rising and falling edge 
+	EXTI_Init(&EXTI_InitStruct);// Add to EXTI 
+	EXTI_ClearITPendingBit(EXTI_Line10);
 	/* Add IRQ vector to NVIC */
 	/* PD11 is connected to EXTI_Line11, which has EXTI0_IRQn vector */
 	NVIC_InitStruct.NVIC_IRQChannel = EXTI15_10_IRQn ;
-	/* Set priority */
-	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0x00;
-	/* Set sub priority */
-	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0x00;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0x07;// Set priority 
+	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0x04;	// Set sub priority 
 	/* Enable interrupt */
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
 	/* Add to NVIC */
 	NVIC_Init(&NVIC_InitStruct);
-	
-	
-	
-
-
 }
 
 
@@ -190,45 +155,31 @@ static void writeReg(uint8_t addr, uint8_t value)
 	int addr2=(((addr|0x80)<<8)|value);
 	GPIO_ResetBits(GPIOA, GPIO_Pin_8); //put NSS pin to LOW
 	r_spiTransmit( addr2 );
-		GPIO_SetBits(GPIOA, GPIO_Pin_8); //put NSS pin to HIGH
+	GPIO_SetBits(GPIOA, GPIO_Pin_8); //put NSS pin to HIGH
 }
 
  int  readReg(int addr)
 {
-
  short	int value=01;
 	int addr2=(addr&0x7f)<<8;
 	//chip select 
 	GPIO_ResetBits(GPIOA, GPIO_Pin_8); //put NSS pin to LOW
-value =	r_spiTransmit( addr2|0x00 );
-	
-//	value =spiTransmit( 0xAA);//read value that is stored in the register
-	
+	value =	r_spiTransmit( addr2|0x00 );
 	GPIO_SetBits(GPIOA, GPIO_Pin_8); //put NSS pin to HIGH
 	return (value&0xff);
-
 }
 
-static void sendFrame(const void *buffer)
+static void sendFrame(const char *buffer)
 {
-	short int bufferSize=0;
-	short int message[9]={0xAA,0xAA,0xAA,0xAA,0xAA,0xAA,0xAA,0xAA,0xAA};
 	changeMode(RF69_MODE_STANDBY); // turn off receiver to prevent reception while filling fifo
   while ((readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // wait for ModeReady
   writeReg(REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_00); // DIO0 is "Packet Sent"
-	int i=8;
-//	while(i!= RF_DIOMAPPING1_DIO0_00 )
-//	i=readReg(REG_DIOMAPPING1);
-	i=0;
 
-	//First send address 
-
+	//First send address
 	writeReg(REG_FIFO ,serverNode);
-
-	
 	for(int i=0; i<7;i++)
 	{
-		writeReg(REG_FIFO ,message[i]);//transmit the message through the spi
+		writeReg(REG_FIFO ,buffer[i]);//transmit the message through the spi
 	}
 	
 	changeMode(RF69_MODE_TX);//change the mode to transmit the value that we wrote in to the FIFO
@@ -284,36 +235,21 @@ void transceiverInit(void)
 	  /* 0x6F */ { REG_TESTDAGC, RF_DAGC_IMPROVED_LOWBETA0 }, // run DAGC continuously in RX mode for Fading Margin Improvement, recommended default for AfcLowBetaOn=0
     {255, 0}
  };
-		/*we initialize the pins we need*/
-	 r_spiInit();
-
-
+		/*we initialize the pins and the peripheral we need*/
+	r_spiInit();
 	int i=0;
- int value=(RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY);
+	int value=(RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY);
 
- while(i!= 0x24 )
+	while(i!= 0x24 )
 	i=readReg(REG_VERSION);
-  
-		
-  //	while(i!=0x2)
-//	i=readReg(0x0C);
-	//	  	while(i!=0xb)
-//	i=readReg(0x04);
-		//			while(i!=0x1a)
-//	i=readReg(0x3);
- //  do writeReg(REG_SYNCVALUE1, 0xAA); while (readReg(REG_SYNCVALUE1)!=0xAA );
-//  do writeReg(REG_SYNCVALUE1, 0x55); while (readReg(REG_SYNCVALUE1)!=0x55 );
-//	 do writeReg(REG_SYNCVALUE1, 0xAA); while (readReg(REG_SYNCVALUE1)!=0xAA );
-		
- /*write our configurations in the transceiver*/
- for (uint8_t i = 0; CONFIG[i][0] != 255; i++)
-   			 writeReg(CONFIG[i][0], CONFIG[i][1]);
+	/*write our configurations in the transceiver*/
+	for (uint8_t i = 0; CONFIG[i][0] != 255; i++)
+		writeReg(CONFIG[i][0], CONFIG[i][1]);
 
 
-value=(RF_FDEVLSB_50000);
-sgpioInit();
-// changeMode(RF69_MODE_TX);
-  while(i!= value )
+	value=(RF_FDEVLSB_50000);
+	sgpioInit();
+	while(i!= value )
 	i=readReg(REG_FDEVLSB);
 }
 
@@ -323,77 +259,68 @@ void changeMode(int newMode)
 	{
 		return;
 	}
-		
 		switch(newMode)
 		{
 			/*change mode to transmiter*/
 			case RF69_MODE_TX:
 				writeReg(REG_OPMODE, ((readReg(REG_OPMODE)&0xe3)|RF_OPMODE_TRANSMITTER));
-				
 			break;
 			/*change mode to receiver*/
 			case RF69_MODE_RX:
 				writeReg(REG_OPMODE, ((readReg(REG_OPMODE)&0xe3)|RF_OPMODE_RECEIVER));
-				
 			break;
 			/*change mode to sleep*/
 			case RF69_MODE_SLEEP:
 				writeReg(REG_OPMODE, ((readReg(REG_OPMODE)&0xe3)|RF_OPMODE_SLEEP));
-				
 			break;
 			/*change mode to standby*/
 			case RF69_MODE_STANDBY:
 				writeReg(REG_OPMODE, ((readReg(REG_OPMODE)&0xe3)|RF_OPMODE_STANDBY));
-				
 			break;
 			/*change mode to listen*/
 			case RF69_MODE_LISTEN:
 				writeReg(REG_OPMODE, ((readReg(REG_OPMODE)&0xe3)|RF_OPMODE_STANDBY));
 				writeReg(REG_OPMODE, ((readReg(REG_OPMODE)&0xe3)|RF_OPMODE_LISTEN_ON));
-				
 			break;
 	}
-		
-	//qualquer coisa para limpar semaphore se ouver algum taken
+	while ((readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // wait for ModeReady
 }
 
 
-void transmitData(const void *transferBuffer)
+void transmitData(const char *transferBuffer)
 {
-	/*first and most important we stop the scheduler because the transmission of data is the most critical part 
-	of our system and we can't have problems in this part	*/ //->review if this should be a critical section or not
-	//to be implemented later
-//while(ackReceived!=RECEIVED)
-{
-	/*send the frame through the transeiver using the sendFrame() function*/
-	sendFrame(transferBuffer);
+	ackReceived=NOTRECEIVED;
+	while(ackReceived!=RECEIVED)
+	{
+		/*send the frame through the transeiver using the sendFrame() function*/
+		sendFrame(transferBuffer);
 
-	int i=0;
-	while(i!=0x8)
-		i=(readReg(REG_IRQFLAGS2)&0x08);
-	/*
-		if the message was received we end the function and leave the critical section->->review if this should be a critical section or not
-		if we did not receive the ACK we retransmit the message
-	*/
-	/*here we leave the critical section*/
-	//to be implemented later
-
-
-}
+		int i=0;
+		while(i!=0x8)
+			i=(readReg(REG_IRQFLAGS2)&0x08);
+		vTaskDelay(100/portTICK_RATE_MS);
+		if(xSemaphoreGive(xSemAckReceived)==pdTRUE )
+			ackReceived=RECEIVED;
+			
+	}
 }
 
 
 /* Handle PD11 interrupt */
 void EXTI15_10_IRQHandler(void)
-	{
-		short int message[10]={0};
-		int i=0;
-		i++;
-			/* Make sure that interrupt flag is set */
+{
+	short int message[10]={0};
+		/* Make sure that interrupt flag is set */
 	if (EXTI_GetITStatus(EXTI_Line10) != RESET)
 	{
 		/* Do your stuff when PD0 is changed */
-			
+		for(int i=0; i<7;i++)
+		{
+			writeReg(REG_FIFO ,message[i]);//transmit the message through the spi
+		}
+		if(message[0]=='O')
+			xSemaphoreTake(xSemAckReceived,portMAX_DELAY);
+		
 		/* Clear interrupt flag */
 		EXTI_ClearITPendingBit(EXTI_Line10);
 	}

@@ -12,24 +12,8 @@
 
 extern xSemaphoreHandle xSemPBFinish; 
 
+extern xTaskHandle xTskGyroAcquisition;
 
-
-/******************************************************************************
-*								Private Variables
-*******************************************************************************/
-
-
-
-/******************************************************************************
-*								Private Headers
-*******************************************************************************/
-
-
-
-
-/*****************************************************************************
-*			Private Functions
-******************************************************************************/
 
 /*****************************************************************************
 *			Public Functions
@@ -43,13 +27,16 @@ void pushButtonInit(void)
 void EXTI0_IRQHandler(void)
 {
 	static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+	//portBASE_TYPE xYieldRequired;
 	
   if(EXTI_GetITStatus(EXTI_Line0) != RESET)
   {
 		EXTI_DeInit(); //disable external interrupt //Deinitializes the EXTI peripheral
 		
+		//xTaskResumeFromISR( xTskGyroAcquisition );
 		xSemaphoreGiveFromISR(xSemPBFinish, &xHigherPriorityTaskWoken);
 		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+		
 		portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
 		
     /* Clear the EXTI line 0 pending bit */

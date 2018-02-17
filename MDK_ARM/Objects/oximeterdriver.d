@@ -23,4 +23,3 @@
 .\objects\oximeterdriver.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\stm32f4xx_tim.h
 .\objects\oximeterdriver.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\StdPeriph_Driver\inc\misc.h
 .\objects\oximeterdriver.o: ..\inc\i2cModule.h
-.\objects\oximeterdriver.o: ..\inc\MAX30100_Registers.h

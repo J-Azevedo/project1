@@ -1,10 +1,7 @@
 /**
   ******************************************************************************
   * @file    microphoneAcquisitionTask.h
-  * @author  Joao
-  * @date    15-December-2017
-  * @brief   This file contains all the functions prototypes for the gyroscope 
-	(L3GD20) driver.
+  * @author  Joao Azevedo and Joao Reis
   ******************************************************************************/
 
 /* Define to prevent recursive inclusion -------------------------------------*/

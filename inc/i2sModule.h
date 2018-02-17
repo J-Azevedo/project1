@@ -1,9 +1,7 @@
 /**
   ******************************************************************************
-  * @file    I2S_Module.h
-  * @author  Joao Azevedo
-  * @brief   This file contains all the functions prototypes for the SPI 
-  *          firmware library. 
+  * @file    i2SModule.h
+  * @author  Joao Azevedo and Joao Reis
   ****************************************************************************** 
  Define to prevent recursive inclusion -------------------------------------*/
 

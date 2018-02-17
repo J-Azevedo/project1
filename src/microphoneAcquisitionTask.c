@@ -2,17 +2,23 @@
 #include "i2sModule.h"
 #include "microphoneDriver.h"
 #include "microphoneAcquisitionTask.h"
+#include "buzzerDriver.h"
 #include <FreeRTOS.h>
 #include <task.h>
 #include <queue.h>
 #include <semphr.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 extern xSemaphoreHandle xSemMicRecordingFinish;
+extern xSemaphoreHandle xSemGyroProcessingFinish;
 
 void microphoneAcquisitionTask(void)
 {
-	//xSemaphoreTake(xSem_Gyro_Processing_Finish, portMAX_DELAY);
+	xSemaphoreTake(xSemGyroProcessingFinish, portMAX_DELAY);
+	buzzerStart();
+	vTaskDelay(1000);
+	buzzerStop();
 	microphoneStart();
-	while(1); //stay here to not start microphone again
 }
 

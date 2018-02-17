@@ -1,10 +1,7 @@
 /**
   ******************************************************************************
   * @file    spiModule.h
-  * @author  Joao 
-  * @date    15-November-2017
-  * @brief   This file contains all the functions prototypes for the SPI 
-  *          firmware library. 
+  * @author  Joao Azevedo and Joao Reis 
   ******************************************************************************/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
