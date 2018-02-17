@@ -3,6 +3,8 @@
 #include <task.h>
 #include <queue.h>
 #include <semphr.h>
+
+
 /*stm libraries*/
 
 /*Project includes*/
@@ -28,12 +30,6 @@
 #define ARM_MATH_CM4
 #endif
 
-#ifndef ARM_MATH_CM4
-#define ARM_MATH_CM4
-#endif
-
-
-
 
 void prvSetupLed(void);
 
@@ -53,6 +49,7 @@ xTaskHandle xTskRfTransmission;
 xQueueHandle xQGyroData;
 xQueueHandle xTransmissionData;
 
+//EventGroupHandle_t xAckStatusFlags;
 
 /*************************************
 *semaphore declaration
@@ -62,6 +59,7 @@ xSemaphoreHandle xSemMicRecordingFinish;
 xSemaphoreHandle xSemMicProcessingFinish;
 xSemaphoreHandle xSemPBFinish; 
 xSemaphoreHandle xSemOximeterAcquisitionFinish;
+
 
 /*************************************
 *queue initialization
@@ -181,21 +179,19 @@ void vRfTransmissionTask(void *pvParameters)
 
 	}
 }
-void voximeterAcquisitionTask(void *pvParameters)
-{
-	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = 120000/portTICK_RATE_MS;
+//void voximeterAcquisitionTask(void *pvParameters)
+//{
+//	TickType_t xLastWakeTime;
+//	const TickType_t xFrequency = 120000/portTICK_RATE_MS;
 
-  // Initialise the xLastWakeTime variable with the current time.
-  xLastWakeTime = xTaskGetTickCount();
-	for( ;; )
-	{
-		void oximeterAcquisitionTask(TickType_t);
+//  // Initialise the xLastWakeTime variable with the current time.
+//  xLastWakeTime = xTaskGetTickCount();
+//	for( ;; )
+//	{
+//		void oximeterAcquisitionTask(TickType_t);
+//	}
+//}
 
-
-
-	}
-}
 void vMicrophoneAcquisitionTask(void *pvParameters)
 {
 	//xTaskToNotify = xTaskGetCurrentTaskHandle();
@@ -226,35 +222,50 @@ void vPBAcquisitionTask(void *pvParameters)
 
 
 
+void startup()
+{
+
+transceiverInit();
+}
 
 int main()
 {
+	
 	portBASE_TYPE task1_pass;
 	portBASE_TYPE task2_pass;
 	portBASE_TYPE task3_pass;
+int i=0;
+	i++;
 
-	i2c_init();											//done
-
-	ResetMAX();
-	EXTI_PD7();
-	gyroStart();
-	transceiverInit();
-	semaphoreInitialization();
+	//i2c_init();											//done
+/*	rfMessage Data;
+	Data.priority=1;
+	Data.type='P';*/
+//	//ResetMAX();
+	//EXTI_PD7();
+//	gyroStart();
+	//transceiverInit();
+	startup();
 	queueInitialization();
+		semaphoreInitialization();
+	//queueInitialization();
 	/* Create Task */
 //	task1_pass = xTaskCreate( vGyroAcquisitionTask, "Gyro_Acquisition_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroAcquisition );
-//	task2_pass = xTaskCreate( vGyroProcessingtTask, "Gyro_Processing_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroProcessing );
-//	task3_pass= xTaskCreate(vRfTransmissionTask,"RF_Transmission_Task",configMINIMAL_STACK_SIZE, NULL, 1,xTskRfTransmission);
-//	if( task1_pass == pdPASS )
-//	{
-//			/* Start the Scheduler */ 
-//			vTaskStartScheduler(); 
-//	}
-//	else
-//	{
-//			/* ERROR! Creating the Tasks */
-//			return -2;
-//	}
+	//task2_pass = xTaskCreate( vGyroProcessingtTask, "Gyro_Processing_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskGyroProcessing );
+	//task3_pass= xTaskCreate(vRfTransmissionTask,"RF_Transmission_Task",configMINIMAL_STACK_SIZE, NULL, 1,xTskRfTransmission);
+task1_pass = xTaskCreate( vRfTransmissionTask, "RF_task", configMINIMAL_STACK_SIZE, NULL, 1, xTskRfTransmission );
+	if( task1_pass == pdPASS )
+	{
+			/* Start the Scheduler */ 
+			vTaskStartScheduler(); 
+
+	}
+	else
+	{
+			/* ERROR! Creating the Tasks */
+			return -2;
+	}
+//		xQueueSend(xTransmissionData,&Data,portMAX_DELAY);
 //	short int data[10]={0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21,0x21};
 
 //	transceiverInit();
@@ -270,7 +281,7 @@ int main()
 //	pushButtonInit();
 	
 while(1);
-	return 0;
+//	return 0;
 }
 
 

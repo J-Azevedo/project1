@@ -1,7 +1,12 @@
 #include "MAX30100.h"
 #include <stdint.h>
 #include <math.h>
-
+#include "main.h"
+#include <FreeRTOS.h>
+#include <task.h>
+#include <queue.h>
+#include <semphr.h>
+extern xSemaphoreHandle xSemOximeterAcquisitionFinish;
 
 
 #define I2C_TIMEOUT_MAX 0xFFFF
@@ -54,15 +59,6 @@ void EXTI9_5_IRQHandler(void) {
 	if (EXTI_GetITStatus(EXTI_Line7) != RESET) {		/* Make sure that interrupt flag is set */
 		MAX2= ReadByte(0x00);
 		WRITE_PTR= ReadByte(0x02);
-//    start(Write);
-//		write(0x02, 0x00 );
-//		I2C_GenerateSTOP(I2C1, ENABLE);
-//		start(Write);
-//		write(0x03, 0x00 );
-//		I2C_GenerateSTOP(I2C1, ENABLE);
-//		start(Write);
-//		write(0x04, 0x00 );
-//		I2C_GenerateSTOP(I2C1, ENABLE);
 		
 		ReadFIFO();
 		
@@ -88,7 +84,6 @@ int ModuleConfig(){
 	SamplingRate sp = MAX30100_SAMPRATE_200HZ;
 	LEDCurrent IRcurr = MAX30100_LED_CURR_20_8MA ;
 	LEDCurrent Redcurr = MAX30100_LED_CURR_27_1MA ;	
-	uint8_t mod, inter, spo,l;
 	m=0;
 	fifoptr=0;
 
@@ -100,20 +95,12 @@ int ModuleConfig(){
 	if(!write(MAX30100_REG_INTERRUPT_ENABLE, 0x80)) return 0;				// Enable FIFO full interruption
 //---------------- SET LEDS PULSE WIDTH, SAMPLING RATE AND SETTING THE HIGH RESOLUTION ----------------------------
 	if(!start(Write)) return 0;
-//	if(!write(MAX30100_REG_SPO2_CONFIGURATION, (led | (sp<<2) | MAX30100_SPC_SPO2_HI_RES_EN) ) ) return 0;	
 	if(!write(MAX30100_REG_SPO2_CONFIGURATION, 0x4D )) return 0;	
 //-------------------------------------- SET LEDS CURRENT ---------------------------------------------------------
 	if(!start(Write)) return 0;
 	if(!write(MAX30100_REG_LED_CONFIGURATION, (IRcurr | Redcurr<<4) ) ) return 0;	
 	
 	I2CStop();
-	
-	
-mod= ReadByte(MAX30100_REG_MODE_CONFIGURATION);
-inter= ReadByte(MAX30100_REG_INTERRUPT_ENABLE);
-spo= ReadByte(MAX30100_REG_SPO2_CONFIGURATION);
-l= ReadByte(MAX30100_REG_LED_CONFIGURATION);
-
 	
 	return 1;
 }
@@ -144,14 +131,6 @@ int ReadFIFO(){
 //every time the FIFO gets full it calls the parsing function
 	if(fifoptr>=0xf0)
 	parsing(fifoptr);
-//-------------------------------------------- STOP ------------------------------------------------- 
-//	I2C_AcknowledgeConfig(I2C1, DISABLE);
-//	I2C_GenerateSTOP(I2C1, ENABLE);
-//	while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT)){
-//		/* If the timeout delay is exeeded, exit with error code */
-//		if ((timeout--) == 0) return 0;
-//	} timeout = I2C_TIMEOUT_MAX;
-	
 	return 1;
 }
 
@@ -354,9 +333,6 @@ int ResetMAX(){
  *															  PARSING FIFO  																		 *
  *************************************************************************************/
 void parsing(uint8_t ptr){
-
-
-
 	int aux=0;
 	int i=0;
 //it reads the complete FIFO and parses it to the raw output arrays
@@ -364,19 +340,17 @@ void parsing(uint8_t ptr){
 	{
 		aux=(FIFO[i++]<<8);
 		ir[m]=aux;
-		
 		aux=FIFO[i++];
 		ir[m]|=aux;
 		aux=(FIFO[i++]<<8);
 		red[m]=aux;
 		aux=(FIFO[i++]);
-		
 		red[m]|=aux;
 		m++;
 	}
 	if(m>=0xff0)
 	{
-		dataProcessing();
+		xSemaphoreGive(xSemOximeterAcquisitionFinish);
 		m=0;
 	}
 	
@@ -388,8 +362,6 @@ void parsing(uint8_t ptr){
 * 						  DC FILTER  BUTTERWORTH HIGHPASS ORDER 5 FC=0.5  											*
 *								FOR IR AND RED DATA																										*
  *************************************************************************************/
-
-
 static void filterloop()
 {
 	//ir highpass filter
@@ -428,9 +400,11 @@ static void filterloop2()
 {
 	for (int i = 0; i<4096; i++)
 	{
-		xv2[0] = xv2[1]; xv2[1] = xv2[2]; xv2[2] = xv2[3]; xv2[3] = xv2[4]; xv2[4] = xv2[5]; xv2[5] = xv2[6]; xv2[6] = xv2[7]; xv2[7] = xv2[8]; xv2[8] = xv2[9]; xv2[9] = xv2[10];
+		xv2[0] = xv2[1]; xv2[1] = xv2[2]; xv2[2] = xv2[3]; xv2[3] = xv2[4]; xv2[4] = xv2[5]; xv2[5] = xv2[6]; xv2[6] 
+		= xv2[7]; xv2[7] = xv2[8]; xv2[8] = xv2[9]; xv2[9] = xv2[10];
 		xv2[10] = outputIR[i] / GAINLOW;
-		yv2[0] = yv2[1]; yv2[1] = yv2[2]; yv2[2] = yv2[3]; yv2[3] = yv2[4]; yv2[4] = yv2[5]; yv2[5] = yv2[6]; yv2[6] = yv2[7]; yv2[7] = yv2[8]; yv2[8] = yv2[9]; yv2[9] = yv2[10];
+		yv2[0] = yv2[1]; yv2[1] = yv2[2]; yv2[2] = yv2[3]; yv2[3] = yv2[4]; yv2[4] = yv2[5]; yv2[5] = yv2[6];
+		yv2[6] = yv2[7]; yv2[7] = yv2[8]; yv2[8] = yv2[9]; yv2[9] = yv2[10];
 		yv2[10] = (xv2[0] + xv2[10]) + 10 * (xv2[1] + xv2[9]) + 45 * (xv2[2] + xv2[8])
 			+ 120 * (xv2[3] + xv2[7]) + 210 * (xv2[4] + xv2[6]) + 252 * xv2[5]
 			+ (-0.0164796305 * yv2[0]) + (0.2309193459 * yv2[1])
@@ -522,8 +496,6 @@ void dataProcessing(void)
 	filterloop2();
 	meanDiff();
 	lastAcquiredData.bpm=bpmCalculator();
-	
-	//xSemaphoreTake( xSemaphore, ( TickType_t ) 0 )
 
 }
 

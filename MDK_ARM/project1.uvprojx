@@ -614,16 +614,6 @@
               <FilePath>..\src\rfTransmissionTask.c</FilePath>
             </File>
             <File>
-              <FileName>MAX30100.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\MAX30100.c</FilePath>
-            </File>
-            <File>
-              <FileName>oximeterAcquisitionTask.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\oximeterAcquisitionTask.c</FilePath>
-            </File>
-            <File>
               <FileName>microphoneAcquisitionTask.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\microphoneAcquisitionTask.c</FilePath>
@@ -642,6 +632,16 @@
               <FileName>wordData.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\wordData.c</FilePath>
+            </File>
+            <File>
+              <FileName>MAX30100.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\MAX30100.c</FilePath>
+            </File>
+            <File>
+              <FileName>oximeterAcquisitionTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\oximeterAcquisitionTask.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -719,16 +719,6 @@
               <FilePath>..\inc\MAX30100_Registers.h</FilePath>
             </File>
             <File>
-              <FileName>MAX30100.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\inc\MAX30100.h</FilePath>
-            </File>
-            <File>
-              <FileName>oximeterAcquisitionTask.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\inc\oximeterAcquisitionTask.h</FilePath>
-            </File>
-            <File>
               <FileName>wordRecognizer.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\inc\wordRecognizer.h</FilePath>
@@ -737,6 +727,11 @@
               <FileName>wordData.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\inc\wordData.h</FilePath>
+            </File>
+            <File>
+              <FileName>MAX30100.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\MAX30100.h</FilePath>
             </File>
           </Files>
         </Group>

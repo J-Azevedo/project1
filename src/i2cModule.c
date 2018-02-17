@@ -50,16 +50,14 @@ void i2c_init(){
 // Starting I2C
 	I2C_Init(I2C1, &I2C_InitStructure);												// Setting I2C peripheral corresponding bits
 	I2C_Cmd(I2C1, ENABLE);																		// Enables the complete I2C1 peripheral
-
-	//DMA_init();
-
 }
 
 
 
 
 
-void EXTI_PD7(void) {
+void EXTI_PD7(void) 
+{
     /* Set variables used */
     GPIO_InitTypeDef GPIO_InitStruct;
     EXTI_InitTypeDef EXTI_InitStruct;
